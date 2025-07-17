@@ -1,0 +1,54 @@
+body, 
+.card-body, 
+.modal {
+    background-color: #f8f9fa;    
+    font-family: "Sunflower", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+h1 {
+    font-family: "Gugi", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.container {
+    max-width: 700px;
+}
+
+.tab-pane {
+    border: 1px solid #3f92e6;
+    border-radius: 0 0 .25rem .25rem;
+}
+
+pre {
+    white-space: pre-wrap; /* 결과를 잘 보여주기 위해 추가 */
+    word-wrap: break-word;
+}
+
+p {
+    font-size: 0.8rem;
+    line-height: 1.4rem;
+}
+
+/* 모달 애니메이션 */
+.modal.fade .modal-dialog {
+    transform: translate(0, -50px) scale(0.8); /* Y축 이동과 함께 80%로 축소 */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out; /* 부드러운 전환 효과 */
+}
+
+.modal.show .modal-dialog {
+    transform: translate(0, 0) scale(1); /* 원래 위치와 크기로 */
+}
+
+.modal.fade {
+    transition: opacity 0.3s linear;
+}
+.modal.fade.show {
+    opacity: 1;
+}
+
+.detail-info {
+    background-color: #2596be;
+}
