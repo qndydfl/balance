@@ -65,14 +65,20 @@
         <div class="container mt-4 rounded shadow-lg">
             <div class="py-1">
                 <h4 class="text-center my-4 bg-success py-2 text-white">
-                Fan Trim Balance Calculator
+                    Fan Trim Balance Calculator<br>
                 </h4>
-                <h6 class="text-secondary text-center mb-4">
+                <h6 class="text-secondary text-center mb-0">
                     CF6-80 Series Engine
                 </h6>
+                <div class="d-flex justify-content-center">
+                    <p class="text-bg-info mt-4 mb-0 p-2 text-center rounded-pill">
+                        "Center Hole Number에 가장 무거운 weight를 놓는다."</br>
+                        "솔루션 선택1 --> Target Weight값에 가장 가깝다."
+                    </p>
+                </div>               
             </div>
             
-            <ul class="nav nav-pills" id="myTab" role="tablist">
+            <ul class="nav nav-pills mt-4" id="myTab" role="tablist">
                 <li class="nav-item border rounded" role="presentation">
                     <button
                         class="nav-link active"
@@ -105,7 +111,7 @@
 
             <div class="tab-content" id="myTabContent">
                 <div
-                    class="tab-pane show active p-3"
+                    class="tab-pane show active mt-3 ps-1"
                     id="run1"
                     role="tabpanel"
                     aria-labelledby="run1-tab"
@@ -155,10 +161,6 @@
                         >
                             Calculate Run 1
                         </button>
-                        <p class="text-bg-info text-muted mt-4 mb-0 p-2">
-                            "Center Hole Number에 가장 무거운 weight를 놓는다."</br>
-                            "솔루션 선택1 --> Target Weight값에 가장 가깝다."
-                        </p>
                     </div>
                     <div id="run1_results">
                         <pre id="run1_output"></pre>
@@ -166,7 +168,7 @@
                 </div>
 
                 <div
-                    class="tab-pane fade p-3"
+                    class="tab-pane fade mt-3 ps-1"
                     id="run2"
                     role="tabpanel"
                     aria-labelledby="run2-tab"
@@ -218,10 +220,6 @@
                         >
                             Calculate Run 2
                         </button>
-                        <p class="text-bg-info text-muted mt-4 mb-0 p-2">
-                            "Center Hole Number에 가장 무거운 weight를 놓는다."</br>
-                            "솔루션 선택1 --> Target Weight값에 가장 가깝다."
-                        </p>
                     </div>
                     <div id="run2_results">
                         <pre id="run2_output"></pre>

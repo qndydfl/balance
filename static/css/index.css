@@ -17,11 +17,6 @@ h1 {
     max-width: 700px;
 }
 
-.tab-pane {
-    border: 1px solid #3f92e6;
-    border-radius: 0 0 .25rem .25rem;
-}
-
 pre {
     white-space: pre-wrap; /* 결과를 잘 보여주기 위해 추가 */
     word-wrap: break-word;

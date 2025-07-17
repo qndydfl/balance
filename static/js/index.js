@@ -228,7 +228,7 @@ function generateResultHTML({n1, holeNumberStr, combinationObj, title, w1: weigh
             <div class="card-body text-center">
                 <h5 class="card-title text-primary-emphasis fw-bold">${title} (${n1}%)</h5>
                 <div class=""> ${runInfoHtml}
-                    <div class="detail-info text-white">
+                    <div class="detail-info text-white rounded-2">
                         Center Hole Number : <span class="badge bg-primary">${holeNumberStr}</span><br>
                         Total Weight Count : <span class="badge bg-secondary">${combination.length}</span><br>
                     </div>
