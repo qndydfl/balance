@@ -276,7 +276,7 @@ function generateResultHTML({n1, holeNumberStr, combinationObj, title, w1: weigh
             html: true,
             sanitize: false, // 이게 중요함: HTML 태그 필터링 방지
             container: 'body',
-            // trigger: 'focus'  // 또는 'click'도 가능
+            trigger: 'focus'  // 또는 'click'도 가능
         });
 
         // 팝오버 내부 클릭 시 닫힘 방지
