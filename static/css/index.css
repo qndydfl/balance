@@ -47,3 +47,43 @@ p {
 .detail-info {
     background-color: #2596be;
 }
+
+/* Run 2 탭 버튼에 active가 적용되었을 때도 노란색 유지 */
+#run2-tab.active {
+    background-color: #ffc107 !important;  /* Bootstrap warning 색 */
+    color: #212529 !important;             /* 검정 텍스트 */
+    border-color: #ffc107 !important;
+}
+
+/* Run 1 탭 버튼 active 상태에서 파란색 유지 */
+#run1-tab.active {
+    background-color: #0d6efd !important;  /* Bootstrap primary 색 */
+    color: #ffffff !important;
+    border-color: #0d6efd !important;
+}
+
+.custom-bg {
+    background-image: url('/static/images/cf6-engine.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.custom-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4); /* 어두운 반투명 레이어 */
+    z-index: 0;
+}
+
+.custom-bg > * {
+    position: relative;
+    z-index: 1;
+}
+
+.custom-input-colored {
+    background-color: #bbc9ce;
+    color: #0d6efd;
+    border: 1px solid #0d6efd;
+}
