@@ -62,9 +62,9 @@ p {
     border-color: #0d6efd !important;
 }
 
-.custom-bg {
-    /* background-image: url('/static/images/cf6-engine.jpg'); 일반적인 루트 */    
-    background-image: url('static/images/cf6-engine.jpg');
+.custom-bg {    
+    /* static/css/index.css */
+    background-image: url('../images/cf6-engine.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
