@@ -13,7 +13,7 @@ h1 {
     font-style: normal;
 }
 
-.container {
+.custom-size {
     max-width: 35rem;
 }
 
@@ -89,17 +89,4 @@ p {
     background-color: #bbc9ce;
     color: #0d6efd;
     border: 1px solid #0d6efd;
-}
-
-/* 기본: 모바일 화면일 때 최대 너비 75% */
-.responsive-box {
-    max-width: 75%;
-    margin: 0 auto;
-}
-
-/* md 이상 (768px 이상)일 때는 너비를 100%로 */
-@media (min-width: 768px) {
-    .responsive-box {
-        max-width: 100%;
-    }
 }
