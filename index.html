@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fan Trim Balance Calculator (EICAS Method)</title>
+
+        <!-- bootstrap -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+            crossorigin="anonymous"
+        />
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+            crossorigin="anonymous"
+        ></script>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"
+        ></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Gugi&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nanum+Gothic&family=Noto+Sans+KR&family=Roboto&family=Sunflower:wght@300;500;700&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- custom -->
+        <link rel="stylesheet" href="static/css/index.css" />
+        <script defer src="static/js/index.js"></script>
+        <!-- <script defer type="module" src="../js/main.js"></script> -->
+    </head>
+    <body>
+        <!-- modal -->
+        <div
+            class="modal fade"
+            id="resultModal"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="resultModalLabel"
+            aria-hidden="true"
+        >
+            <div
+                class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+            >
+                <div class="modal-content">                    
+                    <div class="modal-body" id="modalResultContent"></div>
+                    <button
+                        type="button "
+                        class="btn btn-secondary btn btn-sm mx-auto mb-3"
+                        data-bs-dismiss="modal"
+                        >
+                        닫기
+                    </button>                    
+                </div>
+            </div>
+        </div>
+        <!-- modal -->
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="container custom-bg pb-3 rounded shadow-lg ">
+                <div class="py-1">
+                    <div class="border rounded-2 bg-success text-center py-2 my-3">
+                        <h4 class="text-white mb-0">
+                            Fan Trim Balance Calculator<br>
+                        </h4>
+                    </div>
+                    <div class="text-warning text-center mb-0 text-decoration-underline">
+                        CF6-80 Series Engine
+                    </div>
+                    <div class="d-flex justify-content-center mb-3">
+                        <p class="text-bg-info mt-3 mb-0 p-2 text-center rounded-3">
+                            "Center Hole Number에 가장 무거운 weight를 놓는다."</br>
+                            "솔루션 선택1 --> Target Weight값에 가장 가깝다."
+                        </p>
+                    </div>               
+                </div>
+                
+                <div class="border border-2 border-primary rounded-2 text-white  responsive-box">
+                    <ul class="nav nav-pills nav-fill p-2" id="myTab" role="tablist">
+                        <li class="nav-item border rounded" role="presentation">
+                            <button
+                                class="nav-link active btn btn-primary"
+                                id="run1-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#run1"
+                                type="button"
+                                role="tab"
+                                aria-controls="run1"
+                                aria-selected="true"
+                            >
+                                Run 1
+                            </button>
+                        </li>
+                        <li class="nav-item border rounded" role="presentation">
+                            <button
+                                class="nav-link btn btn-warning"
+                                id="run2-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#run2"
+                                type="button"
+                                role="tab"
+                                aria-controls="run2"
+                                aria-selected="false"
+                            >
+                                Run 2
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="myTabContent">
+                        <div
+                            class="tab-pane show active mt-2 pt-2 ps-2 pe-2"
+                            id="run1"
+                            role="tabpanel"
+                            aria-labelledby="run1-tab"
+                        >
+                            <h5>Fan Rotor Balance (Run 1)</h5>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <label for="run1_n1" class="form-label"
+                                        >N1 (%)</label
+                                    >
+                                    <select class="form-select custom-input-colored" id="run1_n1">
+                                        <option value="95">95%</option>
+                                        <option value="99" selected>99%</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="run1_u0" class="form-label"
+                                        >Amplitude (U0) (units)</label
+                                    >
+                                    <input
+                                        type="number"
+                                        class="form-control custom-input-colored"
+                                        id="run1_u0"
+                                        placeholder="ex, 4.2"
+                                        step="0.1"
+                                        min="0"
+                                    />
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="run1_a0" class="form-label"
+                                        >Phase Angle (A0) (°)</label
+                                    >
+                                    <input
+                                        type="number"
+                                        class="form-control custom-input-colored"
+                                        id="run1_a0"
+                                        placeholder="ex, 80"
+                                        min="0"
+                                        max="359"
+                                    />
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button
+                                    class="btn btn-primary mt-3"
+                                    onclick="calculateRun1()"
+                                >
+                                    Calculate Run 1
+                                </button>
+                            </div>
+                            <div id="run1_results">
+                                <pre id="run1_output"></pre>
+                            </div>
+                        </div>
+
+                        <div
+                            class="tab-pane fade mt-2 pt-2 ps-2 pe-2"
+                            id="run2"
+                            role="tabpanel"
+                            aria-labelledby="run2-tab"
+                        >
+                            <h5>Fan Rotor Balance (Run 2)</h5>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <label for="run2_n1_pre" class="form-label"
+                                        >N1 (%)</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="form-control custom-input-colored"
+                                        id="run2_n1_pre"
+                                        readonly
+                                    />
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="run2_u1" class="form-label"
+                                        >Amplitude (U1) (units)</label
+                                    >
+                                    <input
+                                        type="number"
+                                        class="form-control custom-input-colored"
+                                        id="run2_u1"
+                                        placeholder="ex, 3.5"
+                                        step="0.1"
+                                        min="0"
+                                    />
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="run2_a1" class="form-label"
+                                        >Phase Angle (A1) (°)</label
+                                    >
+                                    <input
+                                        type="number"
+                                        class="form-control custom-input-colored"
+                                        id="run2_a1"
+                                        placeholder="ex, 148"
+                                        min="0"
+                                        max="359"
+                                    />
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button
+                                    class="btn btn-warning mt-3"
+                                    onclick="calculateRun2()"
+                                >
+                                    Calculate Run 2
+                                </button>
+                            </div>
+                            <div id="run2_results">
+                                <pre id="run2_output"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

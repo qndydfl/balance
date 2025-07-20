@@ -1,0 +1,105 @@
+body, 
+.card-body, 
+.modal {
+    background-color: #f8f9fa;    
+    font-family: "Sunflower", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+h1 {
+    font-family: "Gugi", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.container {
+    max-width: 35rem;
+}
+
+pre {
+    white-space: pre-wrap; /* 결과를 잘 보여주기 위해 추가 */
+    word-wrap: break-word;
+}
+
+p {
+    font-size: 0.8rem;
+    line-height: 1.4rem;
+}
+
+/* 모달 애니메이션 */
+.modal.fade .modal-dialog {
+    transform: translate(0, -50px) scale(0.8); /* Y축 이동과 함께 80%로 축소 */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out; /* 부드러운 전환 효과 */
+}
+
+.modal.show .modal-dialog {
+    transform: translate(0, 0) scale(1); /* 원래 위치와 크기로 */
+}
+
+.modal.fade {
+    transition: opacity 0.3s linear;
+}
+.modal.fade.show {
+    opacity: 1;
+}
+
+.detail-info {
+    background-color: #2596be;
+}
+
+/* Run 2 탭 버튼에 active가 적용되었을 때도 노란색 유지 */
+#run2-tab.active {
+    background-color: #ffc107 !important;  /* Bootstrap warning 색 */
+    color: #212529 !important;             /* 검정 텍스트 */
+    border-color: #ffc107 !important;
+}
+
+/* Run 1 탭 버튼 active 상태에서 파란색 유지 */
+#run1-tab.active {
+    background-color: #0d6efd !important;  /* Bootstrap primary 색 */
+    color: #ffffff !important;
+    border-color: #0d6efd !important;
+}
+
+.custom-bg {    
+    /*  일반적인 이미지 경로 --> /static/images/이미지 파일명
+        github에 배포할 경우 --> 상대경로로 수정해줘야 함. 
+    */
+    background-image: url('../images/이주은.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.custom-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4); /* 어두운 반투명 레이어 */
+    z-index: 0;
+}
+
+.custom-bg > * {
+    position: relative;
+    z-index: 1;
+}
+
+.custom-input-colored {
+    background-color: #bbc9ce;
+    color: #0d6efd;
+    border: 1px solid #0d6efd;
+}
+
+/* 기본: 모바일 화면일 때 최대 너비 75% */
+.responsive-box {
+    max-width: 75%;
+    margin: 0 auto;
+}
+
+/* md 이상 (768px 이상)일 때는 너비를 100%로 */
+@media (min-width: 768px) {
+    .responsive-box {
+        max-width: 100%;
+    }
+}
