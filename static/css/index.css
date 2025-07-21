@@ -63,10 +63,11 @@ p {
 }
 
 .custom-bg {    
-    /*  일반적인 이미지 경로 --> /static/images/이미지 파일명
+    /*  일반적인 이미지 경로 --> static/images/이미지 파일명
         github에 배포할 경우 --> 상대경로로 수정해줘야 함. 
     */
-    background-image: url('../images/이주은.jpg');
+    /* background-image: url('../images/cf6-engine.jpg'); */
+    background-color:  #1a3eef;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
