@@ -36,7 +36,7 @@
         <!-- <script defer type="module" src="../js/main.js"></script> -->
     </head>
     <body>
-        <!-- modal -->
+        <!-- modal 시작 -->
         <div
             class="modal fade"
             id="resultModal"
@@ -61,9 +61,9 @@
                 </div>
             </div>
         </div>
-        <!-- modal -->
+        <!-- modal 끝 -->
         <div class="container-fluid p-4 vh-100 bg-secondary">
-            <div class="row d-flex justify-content-center ">
+            <div class="row d-flex justify-content-center">
                 <div class="col-md-12 custom-size  pb-3 rounded shadow-lg custom-bg">
                     <div class="py-1">
                         <div class="border rounded-2 bg-success text-center py-2 my-3">
@@ -143,7 +143,9 @@
                                             placeholder="ex, 4.2"
                                             step="0.1"
                                             min="0"
+                                            max="4.9"
                                         />
+                                        <div id="warn_run1_u0" class="text-danger small mt-1" style="display: none;"></div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="run1_a0" class="form-label"
@@ -155,14 +157,17 @@
                                             id="run1_a0"
                                             placeholder="ex, 80"
                                             min="0"
-                                            max="359"
+                                            max="360"
                                         />
+                                        <div id="warn_run1_a0" class="text-danger small mt-1" style="display: none;"></div>
                                     </div>
                                 </div>
                                 <div class="text-center">
                                     <button
                                         class="btn btn-primary mt-3"
                                         onclick="calculateRun1()"
+                                        id = "calculateRun1Btn"
+                                        disabled
                                     >
                                         Calculate Run 1
                                     </button>
@@ -200,9 +205,11 @@
                                             class="form-control custom-input-colored"
                                             id="run2_u1"
                                             placeholder="ex, 3.5"
-                                            step="0.1"
                                             min="0"
+                                            max="4.9"
+                                            step="0.1"
                                         />
+                                        <div id="warn_run2_u1" class="text-danger small mt-1" style="display: none;"></div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="run2_a1" class="form-label"
@@ -214,14 +221,17 @@
                                             id="run2_a1"
                                             placeholder="ex, 148"
                                             min="0"
-                                            max="359"
+                                            max="360"
                                         />
+                                        <div id="warn_run2_a1" class="text-danger small mt-1" style="display: none;"></div>
                                     </div>
                                 </div>
                                 <div class="text-center">
                                     <button
                                         class="btn btn-warning mt-3"
                                         onclick="calculateRun2()"
+                                        id="calculateRun2Btn"
+                                        disabled
                                     >
                                         Calculate Run 2
                                     </button>

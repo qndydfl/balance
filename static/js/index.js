@@ -284,7 +284,7 @@ function displayResultsInModal(primaryResult, secondaryResult, params) {
     if (secondaryResult) {
         output += generateResultHTML({ ...params, combinationObj: secondaryResult, title: params.title.replace('Solution', 'Alternative Solution') });
     }
-
+    
     document.getElementById('modalResultContent').innerHTML = output;
     const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
     resultModal.show();
@@ -297,18 +297,13 @@ function calculateRun1() {
     const a0 = parseFloat(document.getElementById('run1_a0').value);
     const u0 = parseFloat(document.getElementById('run1_u0').value);
 
-    if (isNaN(n1) || isNaN(a0) || isNaN(u0) || a0 < 0 || a0 > 359 || u0 < 0) {
-        alert('Run 1의 모든 필드에 올바른 숫자 값을 입력해주세요. A0는 0에서 359 사이여야 합니다.');
-        return;
-    }
-
     const w1_factor = W1_FACTORS[n1] || W1_FACTORS[99];
     const calculated_w1 = u0 * w1_factor;
     const holeNumber = getInitialHoleNumber(a0, n1);
     const result = findApproximateWeightCombination(calculated_w1, n1, u0, (u0 >= 4 ? 2 : 1));
 
     if (!result.primary) {
-        alert('적절한 무게 조합을 찾을 수 없습니다. 제공된 Excel 파일을 사용하여 계산해주세요.');
+        alert('적절한 무게 조합을 찾을 수 없습니다.\nu0 값을 다른 값으로 입력해 주세요.');
         return;
     }
 
@@ -332,13 +327,13 @@ function calculateRun2() {
     const a0 = run1_recorded_a0;
     const n1 = run1_recorded_n1;
 
+    const u1 = parseFloat(document.getElementById('run2_u1').value);
+    const a1 = parseFloat(document.getElementById('run2_a1').value);
+
     if (!w1 || !u0 || a0 === null || n1 === 0) {
         alert('Run 2를 계산하기 전에 Run 1을 먼저 수행해주세요.');
         return;
     }
-
-    const u1 = parseFloat(document.getElementById('run2_u1').value);
-    const a1 = parseFloat(document.getElementById('run2_a1').value);
 
     if (isNaN(u1) || isNaN(a1)) {
         alert('Run 2의 모든 입력 필드를 완료해주세요.');
@@ -393,7 +388,7 @@ function calculateRun2() {
     const result = findApproximateWeightCombination(calculated_w2, n1, u0, (u0 >= 4 ? 2 : 1));
 
     if (!result.primary) {
-        alert('Run 2에 대한 적절한 무게 조합을 찾을 수 없습니다. 제공된 Excel 파일을 사용하여 계산해주세요.');
+        alert('Run 2에 대한 적절한 무게 조합을 찾을 수 없습니다.\na1 값을 다른 값으로 입력해 주세요.');
         return;
     }
 
@@ -406,6 +401,147 @@ function calculateRun2() {
 
 // --- 이벤트 리스너 등록 ---
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('calculateRun1Btn')?.addEventListener('click', calculateRun1);
-    document.getElementById('calculateRun2Btn')?.addEventListener('click', calculateRun2);
+
+    /* -- Run 1과 Run 2의 입력 필드와 버튼 -- */
+    const u0Input = document.getElementById('run1_u0');
+    const a0Input = document.getElementById('run1_a0');
+    const run1Btn = document.getElementById('calculateRun1Btn');
+
+    const u1Input = document.getElementById('run2_u1');
+    const a1Input = document.getElementById('run2_a1');
+    const run2Btn = document.getElementById('calculateRun2Btn');
+
+    function validateRun1Inputs() {
+        const u0 = parseFloat(u0Input.value);
+        const a0 = parseFloat(a0Input.value);
+        const isValidU0 = !isNaN(u0) && u0 > 0;
+        const isValidA0 = !isNaN(a0) && a0 >= 0 && a0 < 360;
+        run1Btn.disabled = !(isValidU0 && isValidA0);
+    }
+
+    function validateRun2Inputs() {
+        const u1 = parseFloat(u1Input.value);
+        const a1 = parseFloat(a1Input.value);
+        const isValidU1 = !isNaN(u1) && u1 > 0;
+        const isValidA1 = !isNaN(a1) && a1 >= 0 && a1 < 360;
+        run2Btn.disabled = !(isValidU1 && isValidA1);
+    }
+
+    // Run 1 input값 메시지
+    u0Input.addEventListener('input', validateRun1Inputs);
+    a0Input.addEventListener('input', validateRun1Inputs);
+    a0Input.addEventListener('focus', (e) => {
+        const u0 = u0Input.value.trim();
+        if (!u0) {
+            e.preventDefault();
+            alert('먼저 U0 값을 입력해 주세요.');
+            u0Input.focus();
+        }
+    });
+    a0Input.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            const u0 = u0Input.value.trim();
+            if (!u0) {
+                e.preventDefault();
+                alert('먼저 U0 값을 입력해 주세요.');
+                u0Input.focus();
+            }
+        }
+    });
+
+    // Run 2 input값 메시지
+    u1Input.addEventListener('input', validateRun2Inputs);
+    a1Input.addEventListener('input', validateRun2Inputs);
+    a1Input.addEventListener('focus', (e) => {
+        const u1 = u1Input.value.trim();
+        if (!u1) {
+            e.preventDefault();
+            alert('먼저 U1 값을 입력해 주세요.');
+            u1Input.focus();
+        }
+    });
+    a1Input.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            const u1 = u1Input.value.trim();
+            if (!u1) {
+                e.preventDefault();
+                alert('먼저 U1 값을 입력해 주세요.');
+                u1Input.focus();
+            }
+        }
+    });
+
+    /* Run 2 input값 미입력시 메시지 */
+    const run2Inputs = [
+        document.getElementById('run2_n1_pre'),
+        document.getElementById('run2_u1'),
+        document.getElementById('run2_a1')
+    ];
+
+    // Run1 결과 여부 확인 함수
+    function isRun1Calculated() {
+        return (
+            run1_calculated_w1 &&
+            run1_recorded_u0 &&
+            run1_recorded_a0 !== 0 &&
+            run1_recorded_n1 !== 0
+        );
+    }
+
+    // 입력 차단 로직
+    run2Inputs.forEach(input => {
+        input.addEventListener('focus', (e) => {
+            if (!isRun1Calculated()) {
+                alert('Run 2를 계산하기 전에 Run 1을 먼저 수행해주세요.');
+                input.blur();  // 입력 포커스 제거
+            }
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (!isRun1Calculated()) {
+                e.preventDefault(); // 키보드 입력 차단
+            }
+        });
+
+        input.addEventListener('input', (e) => {
+            if (!isRun1Calculated()) {
+                input.value = ''; // 강제로 입력 제거
+            }
+        });
+    });
+
+    /* 실시간 제한 + 경고 메시지 출력 */
+    const enforceMaxWithWarning = (inputId, warningId, max, label = "입력값") => {
+        const input = document.getElementById(inputId);
+        const warning = document.getElementById(warningId);
+
+        input.addEventListener('input', () => {
+            const value = parseFloat(input.value);
+
+            if (isNaN(value)) {
+                warning.innerText = '';
+                warning.style.display = 'none';
+                return;
+            }
+
+            if (value === 360 && inputId.includes('a')) {
+                // input.value = 0; // 입력값 0으로 표시
+                warning.innerText = `${label} 값을 0 으로 입력해 주세요.`;
+                warning.style.display = 'block';
+            } else if (value > max) {
+                // input.value = max; // 입력값 최대값 표시
+                warning.innerText = `${label}의 최대값은 ${max}입니다. 최대값 범위를 초과했어요. 
+                    ${max} 이하로 다시 입력해 주세요.`;
+                warning.style.display = 'block';
+            } else {
+                warning.innerText = '';
+                warning.style.display = 'none';
+            }
+        });
+    };
+
+    enforceMaxWithWarning('run1_u0', 'warn_run1_u0', 4.9, 'u0');
+    enforceMaxWithWarning('run1_a0', 'warn_run1_a0', 359, 'a0');
+    enforceMaxWithWarning('run2_u1', 'warn_run2_u1', 4.9, 'u0');
+    enforceMaxWithWarning('run2_a1', 'warn_run2_a1', 359, 'a0');
 });
