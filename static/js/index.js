@@ -38,6 +38,7 @@ function generateHoleNumberList(centerHole, combinationLength) {
     return { holes: holeList, centerIndex: centerHoleIndex };
 }
 
+
 // --- 초기 홀 번호 계산 ---
 function getInitialHoleNumber(a0, n1_percent) {
     if (a0 === 360) a0 = 0;
@@ -72,94 +73,198 @@ function getInitialHoleNumber(a0, n1_percent) {
 
 
 // --- 무게 조합 계산 함수 ---
-function findApproximateWeightCombination(targetWeight, n1_percent, u0, allowedDeviation = 1) {
-    let bestCombination = null;
-    let secondBestCombination = null;
-    let bestEval = {
-        deviation: Infinity,
-        totalCount: Infinity,
-        duplicateScore: Infinity,
-        typeCount: Infinity,
-        heavinessScore: -Infinity,
-        total: 0
-    };
+function findApproximateWeightCombination(
+    targetWeight, n1_percent, u0, allowedDeviation = 1) {
+    function generateCombinationsWithDeviationRange(minDev, maxDev, preferZeroDeviation = false) {
+        let bestCombination = null;
+        let secondBestCombination = null;
+        let bestEval = {
+            deviation: Infinity,
+            totalCount: Infinity,
+            duplicateScore: Infinity,
+            typeCount: Infinity,
+            heavinessScore: -Infinity,
+            total: 0
+        };
+        let secondBestEval = { // secondBestEval 추가
+            deviation: Infinity,
+            totalCount: Infinity,
+            duplicateScore: Infinity,
+            typeCount: Infinity,
+            heavinessScore: -Infinity,
+            total: 0
+        };
 
-    const maxTotalCount = (u0 < 3) ? 7 : (u0 < 4 ? (n1_percent === 95 ? 9 : 7) : 9);
-    const maxPairs = Math.floor((maxTotalCount - 1) / 2);
-    const sortedWeights = [...AVAILABLE_WEIGHTS].sort((a, b) => b - a);
+        const maxTotalCount = (u0 < 3) ? 7 : (u0 < 4 ? (n1_percent === 95 ? 9 : 7) : 9);
+        const maxPairs = Math.floor((maxTotalCount - 1) / 2);
+        const sortedWeights = [...AVAILABLE_WEIGHTS].sort((a, b) => b - a);
 
-    function evaluateCombination(combination) {
-        const total = combination.reduce((a, b) => a + b, 0);
-        const weightCounts = {};
-        combination.forEach(w => weightCounts[w] = (weightCounts[w] || 0) + 1);
+        function evaluateCombination(combination) {
+            const total = combination.reduce((a, b) => a + b, 0);
+            const weightCounts = {};
+            combination.forEach(w => weightCounts[w] = (weightCounts[w] || 0) + 1);
 
-        const deviation = Math.abs(total - targetWeight);
-        const p01Count = weightCounts[3.14] || 0;
-        const typeCount = Object.keys(weightCounts).length;
-        const duplicateScore = Object.values(weightCounts).reduce((sum, c) => sum + (c - 1), 0);
-        const heavinessScore = combination.reduce((sum, w) => sum + AVAILABLE_WEIGHTS.indexOf(w), 0);
+            const deviation = total - targetWeight; 
+            const p01Count = weightCounts[3.14] || 0;
+            const typeCount = Object.keys(weightCounts).length;
+            const duplicateScore = Object.values(weightCounts).reduce((sum, c) => 
+                sum + (c - 1), 0);
+            const heavinessScore = combination.reduce((sum, w) => 
+                sum + AVAILABLE_WEIGHTS.indexOf(w), 0);
 
-        return { total, deviation, totalCount: combination.length, typeCount, duplicateScore, heavinessScore, p01Count };
-    }
-
-    function updateBest(combination) {
-        const e = evaluateCombination(combination);
-        if (e.deviation > allowedDeviation || e.p01Count > 4) return;
-
-        const isBetter =
-            e.deviation < bestEval.deviation ||
-            (e.deviation === bestEval.deviation && e.totalCount < bestEval.totalCount) ||
-            (e.deviation === bestEval.deviation && e.totalCount === bestEval.totalCount &&
-                (u0 >= 4 || e.duplicateScore < bestEval.duplicateScore)) ||
-            (e.deviation === bestEval.deviation && e.totalCount === bestEval.totalCount &&
-                e.duplicateScore === bestEval.duplicateScore && e.typeCount < bestEval.typeCount) ||
-            (e.deviation === bestEval.deviation && e.totalCount === bestEval.totalCount &&
-                e.duplicateScore === bestEval.duplicateScore && e.typeCount === bestEval.typeCount &&
-                e.heavinessScore < bestEval.heavinessScore);
-
-        if (isBetter) {
-            if (bestCombination && JSON.stringify(bestCombination) !== JSON.stringify(combination)) {
-                secondBestCombination = bestCombination;
-            }
-            bestCombination = combination;
-            bestEval = e;
-        } else if (!secondBestCombination && JSON.stringify(combination) !== JSON.stringify(bestCombination) && e.p01Count <= 4) {
-            secondBestCombination = combination;
+            return { total, deviation, totalCount: combination.length, 
+                typeCount, duplicateScore, heavinessScore, p01Count 
+            };
         }
-    }
 
-    function generate(pairCount, sideCombo, lastIdx, center) {
-        const sideTotal = sideCombo.reduce((a, b) => a + b, 0);
-        const total = center + 2 * sideTotal;
-        if (total > targetWeight + allowedDeviation) return;
+        function updateBest(combination) {
+            const e = evaluateCombination(combination);
 
-        const fullCombo = [...sideCombo.slice().reverse(), center, ...sideCombo];
-        if (u0 < 4 && fullCombo.some(w => w > center)) return;
+            if (e.deviation < minDev || e.deviation > maxDev || e.p01Count > 4) return;
 
-        updateBest(fullCombo);
+            let isCurrentBetterThanBest = false;
 
-        if (pairCount < maxPairs) {
-            for (let i = lastIdx; i < sortedWeights.length; i++) {
-                generate(pairCount + 1, [...sideCombo, sortedWeights[i]], i, center);
+            if (preferZeroDeviation) {
+                isCurrentBetterThanBest = 
+                    Math.abs(e.deviation) < Math.abs(bestEval.deviation) ||
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
+                        e.totalCount < bestEval.totalCount) ||
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
+                        e.totalCount === bestEval.totalCount && 
+                        e.duplicateScore < bestEval.duplicateScore) ||
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
+                        e.totalCount === bestEval.totalCount && 
+                        e.duplicateScore === bestEval.duplicateScore && 
+                        e.typeCount < bestEval.typeCount) ||
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
+                        e.totalCount === bestEval.totalCount && 
+                        e.duplicateScore === bestEval.duplicateScore && 
+                        e.typeCount === bestEval.typeCount && 
+                        e.heavinessScore < bestEval.heavinessScore);
+            } else {
+                isCurrentBetterThanBest =
+                    (e.deviation >= 0 && 
+                        (bestEval.deviation < 0 || e.deviation < bestEval.deviation)) || 
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
+                        e.totalCount < bestEval.totalCount) ||
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
+                        e.totalCount === bestEval.totalCount && 
+                        (u0 >= 4 || e.duplicateScore < bestEval.duplicateScore)) ||
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
+                        e.totalCount === bestEval.totalCount && 
+                        e.duplicateScore === bestEval.duplicateScore && 
+                        e.typeCount < bestEval.typeCount) ||
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
+                        e.totalCount === bestEval.totalCount && 
+                        e.duplicateScore === bestEval.duplicateScore && 
+                        e.typeCount === bestEval.typeCount && 
+                        e.heavinessScore < bestEval.heavinessScore);
+            }
+            
+            if (isCurrentBetterThanBest) {
+                if (bestCombination && JSON.stringify(bestCombination) !== JSON.stringify(combination)) {
+                    secondBestCombination = bestCombination;
+                    secondBestEval = bestEval;
+                }
+                bestCombination = combination;
+                bestEval = e;
+            } else if (JSON.stringify(combination) !== JSON.stringify(bestCombination) && e.p01Count <= 4) {
+                let isCurrentBetterThanSecondBest = false;
+                if (preferZeroDeviation) {
+                    isCurrentBetterThanSecondBest = 
+                        Math.abs(e.deviation) < Math.abs(secondBestEval.deviation) ||
+                        (Math.abs(e.deviation) === Math.abs(secondBestEval.deviation) && 
+                            e.totalCount < secondBestEval.totalCount) ||
+                        (Math.abs(e.deviation) === Math.abs(secondBestEval.deviation) && 
+                            e.totalCount === secondBestEval.totalCount && 
+                            e.duplicateScore < secondBestEval.duplicateScore);
+                } else {
+                    isCurrentBetterThanSecondBest = 
+                        (e.deviation >= 0 && 
+                            (secondBestEval.deviation < 0 || e.deviation < secondBestEval.deviation)) ||
+                        (e.deviation >= 0 && e.deviation === secondBestEval.deviation && 
+                            e.totalCount < secondBestEval.totalCount);
+                }
+
+                if (isCurrentBetterThanSecondBest) {
+                    secondBestCombination = combination;
+                    secondBestEval = e;
+                }
             }
         }
+
+        function generate(pairCount, sideCombo, lastIdx, center) {
+            const sideTotal = sideCombo.reduce((a, b) => a + b, 0);
+            const total = center + 2 * sideTotal;
+
+            const fullCombo = [...sideCombo.slice().reverse(), center, ...sideCombo];
+            if (u0 < 4 && fullCombo.some(w => w > center)) return;
+
+            updateBest(fullCombo);
+
+            if (pairCount < maxPairs) {
+                for (let i = lastIdx; i < sortedWeights.length; i++) {
+                    generate(pairCount + 1, [...sideCombo, sortedWeights[i]], i, center);
+                }
+            }
+        }
+
+        for (let i = 0; i < sortedWeights.length; i++) {
+            generate(0, [], i, sortedWeights[i]);
+        }
+
+        return {
+            primary: bestCombination ? {
+                combination: bestCombination,
+                totalWeight: bestEval.total,
+                deviation: bestEval.deviation
+            } : null,
+            secondary: (secondBestCombination && 
+                JSON.stringify(secondBestCombination) !== 
+                JSON.stringify(bestCombination)) ? {
+                combination: secondBestCombination,
+                totalWeight: secondBestEval.total,
+                deviation: secondBestEval.deviation 
+            } : null
+        };
     }
 
-    for (let i = 0; i < sortedWeights.length; i++) {
-        generate(0, [], i, sortedWeights[i]);
+    // 1단계: Primary 솔루션을 위해 양수 편차를 우선적으로 탐색
+    let primaryResult = generateCombinationsWithDeviationRange(
+        0, allowedDeviation, false
+    ); 
+    
+    // Primary 솔루션이 없으면 양수 편차의 더 넓은 범위 (예: 0~2)를 다시 시도
+    if (!primaryResult.primary) {
+        primaryResult = generateCombinationsWithDeviationRange(0, 2, false);
     }
+    
+    // Secondary 솔루션을 위해 0에 가장 가까운 편차를 탐색
+    let secondaryResult = generateCombinationsWithDeviationRange(
+        -allowedDeviation, allowedDeviation, true
+    );
+
+    // secondaryResult가 primaryResult와 동일하다면, 
+    // 다른 secondaryResult를 찾거나 null로 설정
+    if (secondaryResult.primary && primaryResult.primary && 
+        JSON.stringify(secondaryResult.primary.combination) === 
+        JSON.stringify(primaryResult.primary.combination)) {
+        secondaryResult.primary = secondaryResult.secondary; 
+        secondaryResult.secondary = null;
+    }
+    
+    // 만약 secondaryResult가 여전히 primaryResult와 같다면 
+    // (secondary의 secondary도 겹치는 경우), null로 처리
+    if (secondaryResult.primary && primaryResult.primary &&
+        JSON.stringify(secondaryResult.primary.combination) === 
+        JSON.stringify(primaryResult.primary.combination)) {
+        secondaryResult.primary = null;
+    }
+
 
     return {
-        primary: bestCombination ? {
-            combination: bestCombination,
-            totalWeight: bestEval.total,
-            deviation: bestEval.deviation
-        } : null,
-        secondary: (secondBestCombination && JSON.stringify(secondBestCombination) !== JSON.stringify(bestCombination)) ? {
-            combination: secondBestCombination,
-            totalWeight: secondBestCombination.reduce((a, b) => a + b, 0),
-            deviation: Math.abs(secondBestCombination.reduce((a, b) => a + b, 0) - targetWeight)
-        } : null
+        primary: primaryResult.primary,
+        secondary: secondaryResult.primary
     };
 }
 
@@ -176,7 +281,8 @@ function countWeightTypes(combination) {
 
 
 // --- 결과 HTML 생성 함수 ---
-function generateResultHTML({ n1, holeNumberStr, combinationObj, title, w1: weightUsed, u0, a0, u1 = null, a1 = null }) {
+function generateResultHTML({ n1, holeNumberStr, combinationObj, title, 
+    w1: weightUsed, u0, a0, u1 = null, a1 = null }) {
     if (!combinationObj) return '';
 
     const { combination, totalWeight, deviation } = combinationObj;
@@ -284,13 +390,24 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title, w1: weig
 // --- 결과 모달 표시 함수 ---
 function displayResultsInModal(primaryResult, secondaryResult, params) {
     let output = '';
-    output += generateResultHTML({ ...params, combinationObj: primaryResult });
+
+    if (primaryResult) {
+        output += generateResultHTML({ ...params, combinationObj: primaryResult, title: params.runType + ' 솔루션 1' });
+    }
 
     if (secondaryResult) {
-        output += generateResultHTML({ ...params, combinationObj: secondaryResult, title: params.title.replace('Solution', 'Alternative Solution') });
+        const secondaryTitle = primaryResult ? params.runType + ' 솔루션 2' : params.runType + ' 주요 솔루션';
+
+        output += generateResultHTML({ ...params, combinationObj: secondaryResult, title: secondaryTitle });
     }
     
-    document.getElementById('modalResultContent').innerHTML = output;
+    // 두 솔루션 모두 없는 경우
+    if (!output) {
+        document.getElementById('modalResultContent').innerHTML = '';
+    } else {
+        document.getElementById('modalResultContent').innerHTML = output;
+    }
+    
     const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
     resultModal.show();
 }
@@ -307,7 +424,7 @@ function calculateRun1() {
     const holeNumber = getInitialHoleNumber(a0, n1);
     const result = findApproximateWeightCombination(calculated_w1, n1, u0, (u0 >= 4 ? 2 : 1));
 
-    if (!result.primary) {
+    if (!result.primary && !result.secondary) {
         alert('적절한 무게 조합을 찾을 수 없습니다.\nu0 값을 다른 값으로 입력해 주세요.');
         return;
     }
@@ -320,7 +437,7 @@ function calculateRun1() {
     document.getElementById('run2_n1_pre').value = n1 + '%';
 
     displayResultsInModal(result.primary, result.secondary, {
-        n1, holeNumberStr: holeNumber.toString(), title: 'Run 1 솔루션 옵션 1', w1: calculated_w1, u0, a0
+        n1, holeNumberStr: holeNumber.toString(), runType: 'Run 1', w1: calculated_w1, u0, a0
     });
 }
 
@@ -334,16 +451,6 @@ function calculateRun2() {
 
     const u1 = parseFloat(document.getElementById('run2_u1').value);
     const a1 = parseFloat(document.getElementById('run2_a1').value);
-
-    // if (!w1 || !u0 || a0 === null || n1 === 0) {
-    //     alert('Run 2를 계산하기 전에 Run 1을 먼저 수행해주세요.');
-    //     return;
-    // }
-
-    // if (isNaN(u1) || isNaN(a1)) {
-    //     alert('Run 2의 모든 입력 필드를 완료해주세요.');
-    //     return;
-    // }
 
     const rad = d => d * Math.PI / 180;
     const deg = r => r * 180 / Math.PI;
@@ -392,13 +499,13 @@ function calculateRun2() {
 
     const result = findApproximateWeightCombination(calculated_w2, n1, u0, (u0 >= 4 ? 2 : 1));
 
-    if (!result.primary) {
+    if (!result.primary && !result.secondary) {
         alert('Run 2에 대한 적절한 무게 조합을 찾을 수 없습니다.\na1 값을 다른 값으로 입력해 주세요.');
         return;
     }
 
     displayResultsInModal(result.primary, result.secondary, {
-        n1, holeNumberStr: `${initialHole} → ${newHoleLocation}`, title: 'Run 2 주요 솔루션',
+        n1, holeNumberStr: `${initialHole} → ${newHoleLocation}`, runType: 'Run 2',
         w1: calculated_w2, u0, a0, u1, a1
     });
 }
@@ -538,11 +645,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (value === 360 && inputId.includes('a')) {
-                // input.value = 0; // 입력값 0으로 표시
                 warning.innerText = `${label} 값을 0 으로 입력해 주세요.`;
                 warning.style.display = 'block';
             } else if (value > max) {
-                // input.value = max; // 입력값 최대값 표시
                 warning.innerText = `${label}의 최대값은 ${max}입니다. 최대값 범위를 초과했어요. 
                     ${max} 이하로 다시 입력해 주세요.`;
                 warning.style.display = 'block';
