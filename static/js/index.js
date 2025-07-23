@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastWarningTime = 0;
 
     run2Inputs.forEach(input => {        
-        ['focus', 'click'].forEach(eventType => {
+        ['focus', 'click', 'touchstart'].forEach(eventType => {
             input.addEventListener(eventType, (e) => {
                 const now = Date.now();
 
