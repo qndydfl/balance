@@ -270,7 +270,7 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
         generateHoleNumberList(parseInt(holeNumberStr.split('→').slice(-1)[0]), combination.length);
 
     let table = `
-        <table class="table table-success table-sm table-striped-colums mt-2">
+        <table class="table table-success table-sm table-striped-colums mt-2 text-center">
             <thead>
                 <tr>
                     <th>Hole</th><th>Weight(g)</th><th>Type</th>
@@ -297,21 +297,17 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
     }
     weightSummary += '</div></div>';
 
-    let runInfoHtml = '';
-    if (u1 !== null && a1 !== null) {
-        runInfoHtml = `
-            <li class="list-group-item list-unstyled text-secondary pb-0">
-                U0 : ${u0} || A0 : ${a0}<br>U1 : ${u1} || A1 : ${a1}
+    const runInfoHtml = (u1 !== null && a1 !== null)
+        ? `<li class="list-group-item list-unstyled text-secondary pb-0">
+            U0: ${u0} | A0: ${a0}<br>U1: ${u1} | A1: ${a1}
+            </li>`
+        : `<li class="list-group-item list-unstyled text-secondary pb-0">
+            U0: ${u0} | A0: ${a0}
             </li>`;
-    } else {
-        runInfoHtml = `
-            <li class="list-group-item list-unstyled text-secondary pb-0">
-                U0 : ${u0} || A0 : ${a0}
-            </li>`;
-    }
 
-    const popoverBtnId = `
-        popover-btn-${n1}-${holeNumberStr.replace(/\s/g, '')}-${Math.random().toString(36).substring(2, 6)}`;
+    const popoverBtnId = `popover-btn-${n1}-${holeNumberStr.replace(/\s+/g, '')}
+        -${Math.random().toString(36).slice(2, 6)}`;
+
 
     const html = `
         <div class="card mb-3">
@@ -324,11 +320,17 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
                     </div>
                     <div>
                         ${weightSummary}
-                        <div>
-                            <button type="button" class="btn btn-sm btn-danger mt-2" id="${popoverBtnId}"
-                                data-bs-toggle="popover" data-bs-title="Weight 상세 정보"
-                                data-bs-placement="bottom" data-bs-html="true" data-bs-content="">
-                                weight 값 자세히 보기
+                        <div class="d-flex justify-content-center mt-2">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-danger mt-2"
+                                id="${popoverBtnId}"
+                                data-bs-toggle="popover"
+                                data-bs-title="<strong>${title} (${n1}%)</strong>"
+                                data-bs-html="true"
+                                data-bs-content=""
+                            >
+                                상세 정보 보기
                             </button>
                         </div>
                     </div>
@@ -338,24 +340,75 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
     `;
 
     setTimeout(() => {
-        const el = document.getElementById(popoverBtnId);
-        if (!el) return;
+        const btn = document.getElementById(popoverBtnId);
+        if (!btn) return;
+
         const contentHTML = `
-            <div style="max-height: 100%; overflow-y: auto;">
-                <div><strong>Target Weight</strong>: ${weightUsed.toFixed(2)} grams</div>
-                <div><strong>Calculate Weight</strong>: ${totalWeight.toFixed(2)} grams</div>
-                <div><strong>Deviation</strong>: ${(totalWeight - weightUsed).toFixed(2)} grams</div>
-                <hr>
-                ${table}
+            <div class="text-center"
+                style="max-height: 100%; overflow-y: auto; width: 20rem; max-width: 90vw;">
+                <div class="">
+                    <div><strong>Target Weight</strong>: ${weightUsed.toFixed(2)} grams</div>
+                    <div><strong>Calculate Weight</strong>: ${totalWeight.toFixed(2)} grams</div>
+                    <div><strong>Deviation</strong>: <span class="badge bg-primary">
+                        ${(totalWeight - weightUsed).toFixed(2)}</span> grams
+                    </div>
+                    <hr>
+                    ${table}                    
+                </div>
             </div>
         `;
-        el.setAttribute('data-bs-content', contentHTML);
-        bootstrap.Popover.getInstance(el)?.dispose();
-        const popover = new bootstrap.Popover(el, {
+        btn.setAttribute('data-bs-content', contentHTML);
+
+        bootstrap.Popover.getInstance(btn)?.dispose();
+
+        const pop = new bootstrap.Popover(btn, {
             html: true,
             sanitize: false,
             container: 'body',
-            trigger: 'focus'
+            trigger: 'focus',
+            popperConfig: {
+                modifiers: [
+                    { name: 'flip', enabled: false },
+                    { name: 'preventOverflow', enabled: false },
+                    {
+                        name: 'applyStyles',
+                        fn({ state }) {
+                            Object.assign(state.elements.popper.style, {
+                                position: 'fixed',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)'
+                            });
+                        }
+                    }
+                ]
+            }
+        });
+
+        btn.addEventListener('show.bs.popover', () => {
+            if (!document.getElementById('popover-backdrop')) {
+                const bd = document.createElement('div');
+                bd.id = 'popover-backdrop';
+                bd.style.position = 'fixed'; bd.style.top = 0; bd.style.left = 0;
+                bd.style.width = '100%'; bd.style.height = '100%';
+                bd.style.background = 'rgba(0,0,0,0.2)';
+                bd.style.backdropFilter = 'blur(5px)';
+                bd.style.zIndex = '1040';
+                document.body.appendChild(bd);
+            }
+            const modalContent = document.querySelector('#resultModal .modal-content');
+            if (modalContent) {
+                modalContent.style.filter = 'blur(5px)';
+            }
+        });
+
+        btn.addEventListener('hidden.bs.popover', () => {
+            const bd = document.getElementById('popover-backdrop');
+            if (bd) bd.remove();
+            const modalContent = document.querySelector('#resultModal .modal-content');
+            if (modalContent) {
+                modalContent.style.filter = '';
+            }
         });
     }, 100);
 

@@ -96,3 +96,7 @@ p {
     color: #0d6efd;
     border: 1px solid #0d6efd;
 }
+
+.popover {
+  max-width: none;  /* 기본 제한 해제 */
+}
