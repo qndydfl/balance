@@ -530,28 +530,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /* --- Run 2 입력 필드 클릭/포커스 시 --- */
+    /* --- Run 2 입력란: 클릭 또는 탭 시 한 번만 경고 --- */
     run2Inputs.forEach(input => {
-        input.addEventListener('click', (e) => {
-            warnRun2IfRun1Incomplete(e);
-            hideWarning(warnRun2U1);
-            hideWarning(warnRun2A1);
-            updateButtonStates();
-        });
-        input.addEventListener('focus', (e) => {
-            warnRun2IfRun1Incomplete(e);
-            hideWarning(warnRun2U1);
-            hideWarning(warnRun2A1);
-            updateButtonStates();
-        });
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Tab') {
-                warnRun2IfRun1Incomplete(e);
-                hideWarning(warnRun2U1);
-                hideWarning(warnRun2A1);
-                updateButtonStates();
-            }
-        });
+        const onceWarn = e => warnRun2IfRun1Incomplete(e);
+        // 클릭했을 때 한 번만
+        input.addEventListener('click', onceWarn, { once: true });
+        // 포커스(탭 포함)될 때 한 번만
+        input.addEventListener('focus', onceWarn, { once: true });
+        // 탭키로 진입할 때 한 번만
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Tab') onceWarn(e);
+        }, { once: true });
     });
 
     /* --- 공통 입력 유효성 검사 설정 --- */
