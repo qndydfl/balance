@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Fan Trim Balance Calculator (EICAS Method)</title>
 
         <!-- bootstrap -->
@@ -48,38 +48,48 @@
             <div
                 class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
             >
-                <div class="modal-content">                    
+                <div class="modal-content">
                     <div class="modal-body" id="modalResultContent"></div>
                     <button
                         type="button "
                         class="btn btn-secondary btn btn-sm mx-auto mb-3"
                         data-bs-dismiss="modal"
-                        >
+                    >
                         닫기
-                    </button>                    
+                    </button>
                 </div>
             </div>
         </div>
         <!-- modal 끝 -->
-        <div class="container-fluid p-4 vh-100 bg-secondary">
-            <div class="row d-flex justify-content-center">
-                <div class="col-md-12 custom-size  pb-3 rounded shadow-lg custom-bg">
-                    <div class="py-1">
-                        <div class="border rounded-2 bg-success text-center py-2 my-3">
-                            <h4 class="text-white mb-0">
-                                Fan Trim Balance Calculator<br>
-                            </h4>
-                        </div>
-                        <p class="mb-0 text-center fst-italic text-secondary ">Revion. Date : JUL25, Revision No: 01</p>
-                        <div class="text-warning text-center my-3 text-decoration-underline">
-                            CF6-80 Series Engine
-                        </div>
-                        <p class="text-end mb-0 text-success">Create by yj/kim</p>
+        <div class="container-fluid p-2 vh-100 bg-secondary 
+            d-flex justify-content-center align-items-center">
+            <div class="row col-12 custom-size pb-3 rounded custom-bg">
+                <div class="py-1">
+                    <div class="border rounded-2 bg-success text-center py-2 my-3">
+                        <h4 class="text-white mb-0">
+                            Fan Trim Balance Calculator<br />
+                        </h4>
                     </div>
-                    
-                    <div class="border border-2 border-primary rounded-2 text-white  responsive-box">
-                        <ul class="nav nav-pills nav-fill p-2" id="myTab" role="tablist">
-                            <li class="nav-item border rounded" role="presentation">
+                    <p class="mb-0 text-center fst-italic text-secondary">
+                        Revion. Date : JUL25, Revision No: 01
+                    </p>
+                    <div class="text-warning text-center my-3 text-decoration-underline">
+                        CF6-80 Series Engine
+                    </div>
+                    <p class="text-end mb-0 text-success">Create by yj/kim</p>
+                </div>
+
+                <div class="pb-3 rounded custom-bg">
+                    <div class="border border-2 border-primary rounded-2 text-white responsive-box">
+                        <ul
+                            class="nav nav-pills nav-fill p-2"
+                            id="myTab"
+                            role="tablist"
+                        >
+                            <li
+                                class="nav-item border rounded"
+                                role="presentation"
+                            >
                                 <button
                                     class="nav-link active btn btn-primary"
                                     id="run1-tab"
@@ -93,7 +103,10 @@
                                     Run 1
                                 </button>
                             </li>
-                            <li class="nav-item border rounded" role="presentation">
+                            <li
+                                class="nav-item border rounded"
+                                role="presentation"
+                            >
                                 <button
                                     class="nav-link btn btn-warning"
                                     id="run2-tab"
@@ -117,14 +130,19 @@
                                 aria-labelledby="run1-tab"
                             >
                                 <h5>Fan Rotor Balance (Run 1)</h5>
-                                <div class="row g-2">
+                                <div class="row g-2 text-secondary">
                                     <div class="col-md-4">
                                         <label for="run1_n1" class="form-label"
                                             >N1 (%)</label
                                         >
-                                        <select class="form-select custom-input-colored" id="run1_n1">
+                                        <select
+                                            class="form-select custom-input-colored p-1"
+                                            id="run1_n1"
+                                        >
                                             <option value="95">95%</option>
-                                            <option value="99" selected>99%</option>
+                                            <option value="99" selected>
+                                                99%
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="col-md-4">
@@ -133,14 +151,18 @@
                                         >
                                         <input
                                             type="number"
-                                            class="form-control custom-input-colored"
+                                            class="form-control custom-input-colored p-1"
                                             id="run1_u0"
                                             placeholder="ex, 4.2"
                                             step="0.1"
                                             min="0"
                                             max="4.9"
                                         />
-                                        <div id="warn_run1_u0" class="text-danger small mt-1" style="display: none;"></div>
+                                        <div
+                                            id="warn_run1_u0"
+                                            class="text-danger small mt-1"
+                                            style="display: none"
+                                        ></div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="run1_a0" class="form-label"
@@ -148,27 +170,31 @@
                                         >
                                         <input
                                             type="number"
-                                            class="form-control custom-input-colored"
+                                            class="form-control custom-input-colored p-1"
                                             id="run1_a0"
                                             placeholder="ex, 80"
                                             min="0"
                                             max="360"
                                         />
-                                        <div id="warn_run1_a0" class="text-danger small mt-1" style="display: none;"></div>
+                                        <div
+                                            id="warn_run1_a0"
+                                            class="text-danger small mt-1"
+                                            style="display: none"
+                                        ></div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="text-center">
                                     <button
                                         class="btn btn-primary mt-3"
                                         onclick="calculateRun1()"
-                                        id = "calculateRun1Btn"
+                                        id="calculateRun1Btn"
                                         disabled
                                     >
                                         Calculate Run 1
                                     </button>
                                 </div>
-                                
+
                                 <div id="run1_results">
                                     <pre id="run1_output"></pre>
                                 </div>
@@ -181,14 +207,16 @@
                                 aria-labelledby="run2-tab"
                             >
                                 <h5>Fan Rotor Balance (Run 2)</h5>
-                                <div class="row g-2">
+                                <div class="row g-2 text-secondary">
                                     <div class="col-md-4">
-                                        <label for="run2_n1_pre" class="form-label"
+                                        <label
+                                            for="run2_n1_pre"
+                                            class="form-label"
                                             >N1 (%)</label
                                         >
                                         <input
                                             type="text"
-                                            class="form-control custom-input-colored"
+                                            class="form-control custom-input-colored p-1"
                                             id="run2_n1_pre"
                                             readonly
                                         />
@@ -199,14 +227,18 @@
                                         >
                                         <input
                                             type="number"
-                                            class="form-control custom-input-colored"
+                                            class="form-control custom-input-colored p-1"
                                             id="run2_u1"
                                             placeholder="ex, 3.5"
                                             min="0"
                                             max="4.9"
                                             step="0.1"
                                         />
-                                        <div id="warn_run2_u1" class="text-danger small mt-1" style="display: none;"></div>
+                                        <div
+                                            id="warn_run2_u1"
+                                            class="text-danger small mt-1"
+                                            style="display: none"
+                                        ></div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="run2_a1" class="form-label"
@@ -214,13 +246,17 @@
                                         >
                                         <input
                                             type="number"
-                                            class="form-control custom-input-colored"
+                                            class="form-control custom-input-colored p-1"
                                             id="run2_a1"
                                             placeholder="ex, 148"
                                             min="0"
                                             max="360"
                                         />
-                                        <div id="warn_run2_a1" class="text-danger small mt-1" style="display: none;"></div>
+                                        <div
+                                            id="warn_run2_a1"
+                                            class="text-danger small mt-1"
+                                            style="display: none"
+                                        ></div>
                                     </div>
                                 </div>
                                 <div class="text-center">
