@@ -123,17 +123,37 @@ function findApproximateWeightCombination(targetWeight, n1_percent, u0, allowedD
             if (preferZeroDeviation) {
                 isCurrentBetterThanBest =
                     Math.abs(e.deviation) < Math.abs(bestEval.deviation) ||
-                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && e.totalCount < bestEval.totalCount) ||
-                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && e.totalCount === bestEval.totalCount && e.duplicateScore < bestEval.duplicateScore) ||
-                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && e.totalCount === bestEval.totalCount && e.duplicateScore === bestEval.duplicateScore && e.typeCount < bestEval.typeCount) ||
-                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && e.totalCount === bestEval.totalCount && e.duplicateScore === bestEval.duplicateScore && e.typeCount === bestEval.typeCount && e.heavinessScore < bestEval.heavinessScore);
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
+                        e.totalCount < bestEval.totalCount) ||
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
+                        e.totalCount === bestEval.totalCount && 
+                        e.duplicateScore < bestEval.duplicateScore) ||
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
+                        e.totalCount === bestEval.totalCount && 
+                        e.duplicateScore === bestEval.duplicateScore && 
+                        e.typeCount < bestEval.typeCount) ||
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
+                        e.totalCount === bestEval.totalCount && 
+                        e.duplicateScore === bestEval.duplicateScore && 
+                        e.typeCount === bestEval.typeCount && 
+                        e.heavinessScore < bestEval.heavinessScore);
             } else {
                 isCurrentBetterThanBest =
                     (e.deviation >= 0 && (bestEval.deviation < 0 || e.deviation < bestEval.deviation)) ||
-                    (e.deviation >= 0 && e.deviation === bestEval.deviation && e.totalCount < bestEval.totalCount) ||
-                    (e.deviation >= 0 && e.deviation === bestEval.deviation && e.totalCount === bestEval.totalCount && (u0 >= 4 || e.duplicateScore < bestEval.duplicateScore)) ||
-                    (e.deviation >= 0 && e.deviation === bestEval.deviation && e.totalCount === bestEval.totalCount && e.duplicateScore === bestEval.duplicateScore && e.typeCount < bestEval.typeCount) ||
-                    (e.deviation >= 0 && e.deviation === bestEval.deviation && e.totalCount === bestEval.totalCount && e.duplicateScore === bestEval.duplicateScore && e.typeCount === bestEval.typeCount && e.heavinessScore < bestEval.heavinessScore);
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
+                        e.totalCount < bestEval.totalCount) ||
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
+                        e.totalCount === bestEval.totalCount && 
+                        (u0 >= 4 || e.duplicateScore < bestEval.duplicateScore)) ||
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
+                        e.totalCount === bestEval.totalCount && 
+                        e.duplicateScore === bestEval.duplicateScore && 
+                        e.typeCount < bestEval.typeCount) ||
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
+                        e.totalCount === bestEval.totalCount && 
+                        e.duplicateScore === bestEval.duplicateScore && 
+                        e.typeCount === bestEval.typeCount && 
+                        e.heavinessScore < bestEval.heavinessScore);
             }
 
             if (isCurrentBetterThanBest) {
@@ -148,12 +168,17 @@ function findApproximateWeightCombination(targetWeight, n1_percent, u0, allowedD
                 if (preferZeroDeviation) {
                     isCurrentBetterThanSecondBest =
                         Math.abs(e.deviation) < Math.abs(secondBestEval.deviation) ||
-                        (Math.abs(e.deviation) === Math.abs(secondBestEval.deviation) && e.totalCount < secondBestEval.totalCount) ||
-                        (Math.abs(e.deviation) === Math.abs(secondBestEval.deviation) && e.totalCount === secondBestEval.totalCount && e.duplicateScore < secondBestEval.duplicateScore);
+                        (Math.abs(e.deviation) === Math.abs(secondBestEval.deviation) && 
+                            e.totalCount < secondBestEval.totalCount) ||
+                        (Math.abs(e.deviation) === Math.abs(secondBestEval.deviation) && 
+                            e.totalCount === secondBestEval.totalCount && 
+                            e.duplicateScore < secondBestEval.duplicateScore);
                 } else {
                     isCurrentBetterThanSecondBest =
-                        (e.deviation >= 0 && (secondBestEval.deviation < 0 || e.deviation < secondBestEval.deviation)) ||
-                        (e.deviation >= 0 && e.deviation === secondBestEval.deviation && e.totalCount < secondBestEval.totalCount);
+                        (e.deviation >= 0 && (secondBestEval.deviation < 0 || 
+                            e.deviation < secondBestEval.deviation)) ||
+                        (e.deviation >= 0 && e.deviation === secondBestEval.deviation && 
+                            e.totalCount < secondBestEval.totalCount);
                 }
 
                 if (isCurrentBetterThanSecondBest) {
@@ -188,7 +213,9 @@ function findApproximateWeightCombination(targetWeight, n1_percent, u0, allowedD
                 totalWeight: bestEval.total,
                 deviation: bestEval.deviation
             } : null,
-            secondary: (secondBestCombination && JSON.stringify(secondBestCombination) !== JSON.stringify(bestCombination)) ? {
+            secondary: (secondBestCombination && 
+                JSON.stringify(secondBestCombination) !== 
+                JSON.stringify(bestCombination)) ? {
                 combination: secondBestCombination,
                 totalWeight: secondBestEval.total,
                 deviation: secondBestEval.deviation
@@ -204,12 +231,17 @@ function findApproximateWeightCombination(targetWeight, n1_percent, u0, allowedD
     }
     // Secondary 솔루션을 위해 0에 가장 가까운 편차를 탐색
     let secondaryResult = generateCombinationsWithDeviationRange(-allowedDeviation, allowedDeviation, true);
+
     // secondaryResult가 primaryResult와 동일하다면 다른 secondaryResult를 찾거나 null로 설정
-    if (secondaryResult.primary && primaryResult.primary && JSON.stringify(secondaryResult.primary.combination) === JSON.stringify(primaryResult.primary.combination)) {
+    if (secondaryResult.primary && primaryResult.primary && 
+        JSON.stringify(secondaryResult.primary.combination) === 
+        JSON.stringify(primaryResult.primary.combination)) {
         secondaryResult.primary = secondaryResult.secondary;
         secondaryResult.secondary = null;
     }
-    if (secondaryResult.primary && primaryResult.primary && JSON.stringify(secondaryResult.primary.combination) === JSON.stringify(primaryResult.primary.combination)) {
+    if (secondaryResult.primary && primaryResult.primary && 
+        JSON.stringify(secondaryResult.primary.combination) === 
+        JSON.stringify(primaryResult.primary.combination)) {
         secondaryResult.primary = null;
     }
 
@@ -230,10 +262,12 @@ function countWeightTypes(combination) {
 }
 
 // --- 결과 HTML 생성 함수 ---
-function generateResultHTML({ n1, holeNumberStr, combinationObj, title, w1: weightUsed, u0, a0, u1 = null, a1 = null }) {
+function generateResultHTML({ n1, holeNumberStr, combinationObj, title, 
+    w1: weightUsed, u0, a0, u1 = null, a1 = null }) {
     if (!combinationObj) return '';
     const { combination, totalWeight, deviation } = combinationObj;
-    const { holes: holeList, centerIndex } = generateHoleNumberList(parseInt(holeNumberStr.split('→').slice(-1)[0]), combination.length);
+    const { holes: holeList, centerIndex } = 
+        generateHoleNumberList(parseInt(holeNumberStr.split('→').slice(-1)[0]), combination.length);
 
     let table = `
         <table class="table table-success table-sm table-striped-colums mt-2">
@@ -332,7 +366,8 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title, w1: weig
 function displayResultsInModal(primaryResult, secondaryResult, params) {
     let output = '';
     if (primaryResult) {
-        output += generateResultHTML({ ...params, combinationObj: primaryResult, title: params.runType + ' 솔루션 1' });
+        output += generateResultHTML({ ...params, combinationObj: primaryResult, 
+            title: params.runType + ' 솔루션 1' });
     }
     if (secondaryResult) {
         const secondaryTitle = primaryResult ? params.runType + ' 솔루션 2' : params.runType + ' 주요 솔루션';
@@ -346,7 +381,6 @@ function displayResultsInModal(primaryResult, secondaryResult, params) {
     const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
     resultModal.show();
 }
-
 
 // --- Run 1 계산 ---
 function calculateRun1() {
@@ -380,7 +414,6 @@ function calculateRun1() {
         a0
     });
 }
-
 
 // --- Run 2 계산 ---
 function calculateRun2() {
@@ -467,7 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const run2A1Input   = document.getElementById('run2_a1');
     const run2Btn       = document.getElementById('calculateRun2Btn');
 
-    const run2Inputs = [ run2N1PreInput, run2U1Input, run2A1Input ];
+    
 
     /* --- 경고 메시지를 표시할 DOM 요소들 --- */
     const warnRun1U0 = document.getElementById('warn_run1_u0');
@@ -519,32 +552,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const validRun2A1 = validateInput(run2A1Input, warnRun2A1, 0, 360, 'A1', true);
         run2Btn.disabled = !(isRun1FullyEntered() && validRun2U1 && validRun2A1);
     }
+    const run2Inputs = [ run2N1PreInput, run2U1Input, run2A1Input ];
 
-    /* --- Run 2 접근 전 Run 1 완료 확인 --- */
-    function warnRun2IfRun1Incomplete(e) {
-        if (!isRun1FullyEntered()) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            alert('Run 1 입력값을 모두 입력해주세요.');
-            run1U0Input.focus();
-        }
-    }
-
-    /* --- Run 2 입력란: 클릭 또는 탭 시 한 번만 경고 --- */
+    // 마우스로 클릭 시: Run1 미완료면 경고, 포커스 이동 방지
     run2Inputs.forEach(input => {
-        const onceWarn = e => warnRun2IfRun1Incomplete(e);
-        // 클릭했을 때 한 번만
-        input.addEventListener('click', onceWarn, { once: true });
-        // 포커스(탭 포함)될 때 한 번만
-        input.addEventListener('focus', onceWarn, { once: true });
-        // 탭키로 진입할 때 한 번만
-        input.addEventListener('keydown', e => {
-            if (e.key === 'Tab') onceWarn(e);
-        }, { once: true });
+        input.addEventListener('mousedown', e => {
+            if (!isRun1FullyEntered()) {
+                e.preventDefault();
+                alert('Run 1 입력값을 모두 입력해주세요.');
+                run1U0Input.focus();
+            }
+        });
+    });
+
+    // 키보드 Tab 이동 시: document 레벨에서 가로채어, Run2 입력란으로 포커스가 넘어가면 차단
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Tab' && !isRun1FullyEntered()) {
+            setTimeout(() => {
+                const active = document.activeElement;
+                if (run2Inputs.includes(active)) {
+                    alert('Run 1 입력값을 모두 입력해주세요.');
+                    active.blur();
+                    run1U0Input.focus();
+                }
+            }, 0);
+        }
     });
 
     /* --- 공통 입력 유효성 검사 설정 --- */
-    function setupInputValidation(inputEl, warningEl, min, max, label, isAngle = false, priorEl = null, priorMsg = '') {
+    function setupInputValidation(inputEl, warningEl, min, max, label, 
+        isAngle = false, priorEl = null, priorMsg = '') {
         inputEl.addEventListener('input', updateButtonStates);
         inputEl.addEventListener('blur', () => {
             if (inputEl.id.startsWith('run2_') && !isRun1FullyEntered()) {
@@ -600,9 +637,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setupInputValidation(run1U0Input, warnRun1U0, 0, 5, 'U0');
-    setupInputValidation(run1A0Input, warnRun1A0, 0, 360, 'A0', true, run1U0Input, '먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
+    setupInputValidation(run1A0Input, warnRun1A0, 0, 360, 'A0', 
+        true, run1U0Input, '먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
     setupInputValidation(run2U1Input, warnRun2U1, 0, 5, 'U1');
-    setupInputValidation(run2A1Input, warnRun2A1, 0, 360, 'A1', true, run2U1Input, '먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
+    setupInputValidation(run2A1Input, warnRun2A1, 0, 360, 'A1', 
+        true, run2U1Input, '먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
 
     // 초기 상태
     updateButtonStates();
