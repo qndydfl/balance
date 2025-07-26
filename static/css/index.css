@@ -7,6 +7,11 @@ body,
     font-style: normal;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 h1 {
     font-family: "Gugi", sans-serif;
     font-weight: 400;
