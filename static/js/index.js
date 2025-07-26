@@ -8,13 +8,11 @@ const AVAILABLE_WEIGHTS = [17.31, 14.71, 12, 9.16, 6.24, 3.14];
 const WEIGHT_LABELS = ['P06', 'P05', 'P04', 'P03', 'P02', 'P01'];
 const W1_FACTORS = { 95: 32.2, 99: 28.6 };
 
-
 // 매직 넘버 정의
 const TOTAL_HOLES = 38;
 const DEGREES_PER_HOLE = 360 / TOTAL_HOLES;
 const HOLE_ADJUSTMENT_FACTOR = 8.56;
 const DEGREES_PER_HOLE_APPROX = 9.47; // 360 / 38 ≈ 9.4736
-
 
 // --- 홀 번호 리스트 생성 ---
 function generateHoleNumberList(centerHole, combinationLength) {
@@ -38,11 +36,9 @@ function generateHoleNumberList(centerHole, combinationLength) {
     return { holes: holeList, centerIndex: centerHoleIndex };
 }
 
-
 // --- 초기 홀 번호 계산 ---
 function getInitialHoleNumber(a0, n1_percent) {
     if (a0 === 360) a0 = 0;
-
     const ranges = [
         [0, 10], [10, 19], [19, 29], [29, 38], [38, 48], [48, 57], [57, 67],
         [67, 76], [76, 86], [86, 95], [95, 105], [105, 114], [114, 124], [124, 133],
@@ -71,10 +67,8 @@ function getInitialHoleNumber(a0, n1_percent) {
     return calcHole;
 }
 
-
 // --- 무게 조합 계산 함수 ---
-function findApproximateWeightCombination(
-    targetWeight, n1_percent, u0, allowedDeviation = 1) {
+function findApproximateWeightCombination(targetWeight, n1_percent, u0, allowedDeviation = 1) {
     function generateCombinationsWithDeviationRange(minDev, maxDev, preferZeroDeviation = false) {
         let bestCombination = null;
         let secondBestCombination = null;
@@ -86,7 +80,7 @@ function findApproximateWeightCombination(
             heavinessScore: -Infinity,
             total: 0
         };
-        let secondBestEval = { // secondBestEval 추가
+        let secondBestEval = {
             deviation: Infinity,
             totalCount: Infinity,
             duplicateScore: Infinity,
@@ -104,63 +98,44 @@ function findApproximateWeightCombination(
             const weightCounts = {};
             combination.forEach(w => weightCounts[w] = (weightCounts[w] || 0) + 1);
 
-            const deviation = total - targetWeight; 
+            const deviation = total - targetWeight;
             const p01Count = weightCounts[3.14] || 0;
             const typeCount = Object.keys(weightCounts).length;
-            const duplicateScore = Object.values(weightCounts).reduce((sum, c) => 
-                sum + (c - 1), 0);
-            const heavinessScore = combination.reduce((sum, w) => 
-                sum + AVAILABLE_WEIGHTS.indexOf(w), 0);
+            const duplicateScore = Object.values(weightCounts).reduce((sum, c) => sum + (c - 1), 0);
+            const heavinessScore = combination.reduce((sum, w) => sum + AVAILABLE_WEIGHTS.indexOf(w), 0);
 
-            return { total, deviation, totalCount: combination.length, 
-                typeCount, duplicateScore, heavinessScore, p01Count 
+            return {
+                total,
+                deviation,
+                totalCount: combination.length,
+                typeCount,
+                duplicateScore,
+                heavinessScore,
+                p01Count
             };
         }
 
         function updateBest(combination) {
             const e = evaluateCombination(combination);
-
             if (e.deviation < minDev || e.deviation > maxDev || e.p01Count > 4) return;
 
             let isCurrentBetterThanBest = false;
-
             if (preferZeroDeviation) {
-                isCurrentBetterThanBest = 
+                isCurrentBetterThanBest =
                     Math.abs(e.deviation) < Math.abs(bestEval.deviation) ||
-                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
-                        e.totalCount < bestEval.totalCount) ||
-                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
-                        e.totalCount === bestEval.totalCount && 
-                        e.duplicateScore < bestEval.duplicateScore) ||
-                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
-                        e.totalCount === bestEval.totalCount && 
-                        e.duplicateScore === bestEval.duplicateScore && 
-                        e.typeCount < bestEval.typeCount) ||
-                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && 
-                        e.totalCount === bestEval.totalCount && 
-                        e.duplicateScore === bestEval.duplicateScore && 
-                        e.typeCount === bestEval.typeCount && 
-                        e.heavinessScore < bestEval.heavinessScore);
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && e.totalCount < bestEval.totalCount) ||
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && e.totalCount === bestEval.totalCount && e.duplicateScore < bestEval.duplicateScore) ||
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && e.totalCount === bestEval.totalCount && e.duplicateScore === bestEval.duplicateScore && e.typeCount < bestEval.typeCount) ||
+                    (Math.abs(e.deviation) === Math.abs(bestEval.deviation) && e.totalCount === bestEval.totalCount && e.duplicateScore === bestEval.duplicateScore && e.typeCount === bestEval.typeCount && e.heavinessScore < bestEval.heavinessScore);
             } else {
                 isCurrentBetterThanBest =
-                    (e.deviation >= 0 && 
-                        (bestEval.deviation < 0 || e.deviation < bestEval.deviation)) || 
-                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
-                        e.totalCount < bestEval.totalCount) ||
-                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
-                        e.totalCount === bestEval.totalCount && 
-                        (u0 >= 4 || e.duplicateScore < bestEval.duplicateScore)) ||
-                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
-                        e.totalCount === bestEval.totalCount && 
-                        e.duplicateScore === bestEval.duplicateScore && 
-                        e.typeCount < bestEval.typeCount) ||
-                    (e.deviation >= 0 && e.deviation === bestEval.deviation && 
-                        e.totalCount === bestEval.totalCount && 
-                        e.duplicateScore === bestEval.duplicateScore && 
-                        e.typeCount === bestEval.typeCount && 
-                        e.heavinessScore < bestEval.heavinessScore);
+                    (e.deviation >= 0 && (bestEval.deviation < 0 || e.deviation < bestEval.deviation)) ||
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && e.totalCount < bestEval.totalCount) ||
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && e.totalCount === bestEval.totalCount && (u0 >= 4 || e.duplicateScore < bestEval.duplicateScore)) ||
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && e.totalCount === bestEval.totalCount && e.duplicateScore === bestEval.duplicateScore && e.typeCount < bestEval.typeCount) ||
+                    (e.deviation >= 0 && e.deviation === bestEval.deviation && e.totalCount === bestEval.totalCount && e.duplicateScore === bestEval.duplicateScore && e.typeCount === bestEval.typeCount && e.heavinessScore < bestEval.heavinessScore);
             }
-            
+
             if (isCurrentBetterThanBest) {
                 if (bestCombination && JSON.stringify(bestCombination) !== JSON.stringify(combination)) {
                     secondBestCombination = bestCombination;
@@ -171,19 +146,14 @@ function findApproximateWeightCombination(
             } else if (JSON.stringify(combination) !== JSON.stringify(bestCombination) && e.p01Count <= 4) {
                 let isCurrentBetterThanSecondBest = false;
                 if (preferZeroDeviation) {
-                    isCurrentBetterThanSecondBest = 
+                    isCurrentBetterThanSecondBest =
                         Math.abs(e.deviation) < Math.abs(secondBestEval.deviation) ||
-                        (Math.abs(e.deviation) === Math.abs(secondBestEval.deviation) && 
-                            e.totalCount < secondBestEval.totalCount) ||
-                        (Math.abs(e.deviation) === Math.abs(secondBestEval.deviation) && 
-                            e.totalCount === secondBestEval.totalCount && 
-                            e.duplicateScore < secondBestEval.duplicateScore);
+                        (Math.abs(e.deviation) === Math.abs(secondBestEval.deviation) && e.totalCount < secondBestEval.totalCount) ||
+                        (Math.abs(e.deviation) === Math.abs(secondBestEval.deviation) && e.totalCount === secondBestEval.totalCount && e.duplicateScore < secondBestEval.duplicateScore);
                 } else {
-                    isCurrentBetterThanSecondBest = 
-                        (e.deviation >= 0 && 
-                            (secondBestEval.deviation < 0 || e.deviation < secondBestEval.deviation)) ||
-                        (e.deviation >= 0 && e.deviation === secondBestEval.deviation && 
-                            e.totalCount < secondBestEval.totalCount);
+                    isCurrentBetterThanSecondBest =
+                        (e.deviation >= 0 && (secondBestEval.deviation < 0 || e.deviation < secondBestEval.deviation)) ||
+                        (e.deviation >= 0 && e.deviation === secondBestEval.deviation && e.totalCount < secondBestEval.totalCount);
                 }
 
                 if (isCurrentBetterThanSecondBest) {
@@ -196,7 +166,6 @@ function findApproximateWeightCombination(
         function generate(pairCount, sideCombo, lastIdx, center) {
             const sideTotal = sideCombo.reduce((a, b) => a + b, 0);
             const total = center + 2 * sideTotal;
-
             const fullCombo = [...sideCombo.slice().reverse(), center, ...sideCombo];
             if (u0 < 4 && fullCombo.some(w => w > center)) return;
 
@@ -219,55 +188,36 @@ function findApproximateWeightCombination(
                 totalWeight: bestEval.total,
                 deviation: bestEval.deviation
             } : null,
-            secondary: (secondBestCombination && 
-                JSON.stringify(secondBestCombination) !== 
-                JSON.stringify(bestCombination)) ? {
+            secondary: (secondBestCombination && JSON.stringify(secondBestCombination) !== JSON.stringify(bestCombination)) ? {
                 combination: secondBestCombination,
                 totalWeight: secondBestEval.total,
-                deviation: secondBestEval.deviation 
+                deviation: secondBestEval.deviation
             } : null
         };
     }
 
     // 1단계: Primary 솔루션을 위해 양수 편차를 우선적으로 탐색
-    let primaryResult = generateCombinationsWithDeviationRange(
-        0, allowedDeviation, false
-    ); 
-    
+    let primaryResult = generateCombinationsWithDeviationRange(0, allowedDeviation, false);
     // Primary 솔루션이 없으면 양수 편차의 더 넓은 범위 (예: 0~2)를 다시 시도
     if (!primaryResult.primary) {
         primaryResult = generateCombinationsWithDeviationRange(0, 2, false);
     }
-    
     // Secondary 솔루션을 위해 0에 가장 가까운 편차를 탐색
-    let secondaryResult = generateCombinationsWithDeviationRange(
-        -allowedDeviation, allowedDeviation, true
-    );
-
-    // secondaryResult가 primaryResult와 동일하다면, 
-    // 다른 secondaryResult를 찾거나 null로 설정
-    if (secondaryResult.primary && primaryResult.primary && 
-        JSON.stringify(secondaryResult.primary.combination) === 
-        JSON.stringify(primaryResult.primary.combination)) {
-        secondaryResult.primary = secondaryResult.secondary; 
+    let secondaryResult = generateCombinationsWithDeviationRange(-allowedDeviation, allowedDeviation, true);
+    // secondaryResult가 primaryResult와 동일하다면 다른 secondaryResult를 찾거나 null로 설정
+    if (secondaryResult.primary && primaryResult.primary && JSON.stringify(secondaryResult.primary.combination) === JSON.stringify(primaryResult.primary.combination)) {
+        secondaryResult.primary = secondaryResult.secondary;
         secondaryResult.secondary = null;
     }
-    
-    // 만약 secondaryResult가 여전히 primaryResult와 같다면 
-    // (secondary의 secondary도 겹치는 경우), null로 처리
-    if (secondaryResult.primary && primaryResult.primary &&
-        JSON.stringify(secondaryResult.primary.combination) === 
-        JSON.stringify(primaryResult.primary.combination)) {
+    if (secondaryResult.primary && primaryResult.primary && JSON.stringify(secondaryResult.primary.combination) === JSON.stringify(primaryResult.primary.combination)) {
         secondaryResult.primary = null;
     }
-
 
     return {
         primary: primaryResult.primary,
         secondary: secondaryResult.primary
     };
 }
-
 
 // --- 무게 종류별 개수 계산 ---
 function countWeightTypes(combination) {
@@ -279,16 +229,11 @@ function countWeightTypes(combination) {
     return count;
 }
 
-
 // --- 결과 HTML 생성 함수 ---
-function generateResultHTML({ n1, holeNumberStr, combinationObj, title, 
-    w1: weightUsed, u0, a0, u1 = null, a1 = null }) {
+function generateResultHTML({ n1, holeNumberStr, combinationObj, title, w1: weightUsed, u0, a0, u1 = null, a1 = null }) {
     if (!combinationObj) return '';
-
     const { combination, totalWeight, deviation } = combinationObj;
-    const { holes: holeList, centerIndex } = generateHoleNumberList(
-        parseInt(holeNumberStr.split('→').slice(-1)[0]), combination.length
-    );
+    const { holes: holeList, centerIndex } = generateHoleNumberList(parseInt(holeNumberStr.split('→').slice(-1)[0]), combination.length);
 
     let table = `
         <table class="table table-success table-sm table-striped-colums mt-2">
@@ -298,7 +243,6 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
                 </tr>
             </thead>
         <tbody>`;
-
     combination.forEach((w, i) => {
         const labelIdx = AVAILABLE_WEIGHTS.findIndex(v => v === w);
         const label = labelIdx !== -1 ? WEIGHT_LABELS[labelIdx] : '-';
@@ -362,7 +306,6 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
     setTimeout(() => {
         const el = document.getElementById(popoverBtnId);
         if (!el) return;
-
         const contentHTML = `
             <div style="max-height: 100%; overflow-y: auto;">
                 <div><strong>Target Weight</strong>: ${weightUsed.toFixed(2)} grams</div>
@@ -372,42 +315,34 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
                 ${table}
             </div>
         `;
-
         el.setAttribute('data-bs-content', contentHTML);
         bootstrap.Popover.getInstance(el)?.dispose();
-        const popover = new bootstrap.Popover(el, { 
-            html: true, 
-            sanitize: false, 
-            container: 'body', 
-            trigger: 'focus' 
+        const popover = new bootstrap.Popover(el, {
+            html: true,
+            sanitize: false,
+            container: 'body',
+            trigger: 'focus'
         });
-    },100);
+    }, 100);
 
     return html;
 }
 
-
 // --- 결과 모달 표시 함수 ---
 function displayResultsInModal(primaryResult, secondaryResult, params) {
     let output = '';
-
     if (primaryResult) {
         output += generateResultHTML({ ...params, combinationObj: primaryResult, title: params.runType + ' 솔루션 1' });
     }
-
     if (secondaryResult) {
         const secondaryTitle = primaryResult ? params.runType + ' 솔루션 2' : params.runType + ' 주요 솔루션';
-
         output += generateResultHTML({ ...params, combinationObj: secondaryResult, title: secondaryTitle });
     }
-    
-    // 두 솔루션 모두 없는 경우
     if (!output) {
         document.getElementById('modalResultContent').innerHTML = '';
     } else {
         document.getElementById('modalResultContent').innerHTML = output;
     }
-    
     const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
     resultModal.show();
 }
@@ -437,7 +372,12 @@ function calculateRun1() {
     document.getElementById('run2_n1_pre').value = n1 + '%';
 
     displayResultsInModal(result.primary, result.secondary, {
-        n1, holeNumberStr: holeNumber.toString(), runType: 'Run 1', w1: calculated_w1, u0, a0
+        n1,
+        holeNumberStr: holeNumber.toString(),
+        runType: 'Run 1',
+        w1: calculated_w1,
+        u0,
+        a0
     });
 }
 
@@ -477,7 +417,6 @@ function calculateRun2() {
         cosAngle = Math.min(1, Math.max(-1, cosAngle));
         finalX_deg = deg(Math.acos(cosAngle));
         if (isNaN(finalX_deg)) finalX_deg = 0;
-
         const crossProduct = dx * y0 - dy * x0;
         finalDirection = crossProduct > 0 ? 'CCW' : crossProduct < 0 ? 'CW' : 'None';
     }
@@ -498,18 +437,22 @@ function calculateRun2() {
     }
 
     const result = findApproximateWeightCombination(calculated_w2, n1, u0, (u0 >= 4 ? 2 : 1));
-
     if (!result.primary && !result.secondary) {
         alert('Run 2에 대한 적절한 무게 조합을 찾을 수 없습니다.\na1 값을 다른 값으로 입력해 주세요.');
         return;
     }
 
     displayResultsInModal(result.primary, result.secondary, {
-        n1, holeNumberStr: `${initialHole} → ${newHoleLocation}`, runType: 'Run 2',
-        w1: calculated_w2, u0, a0, u1, a1
+        n1,
+        holeNumberStr: `${initialHole} → ${newHoleLocation}`,
+        runType: 'Run 2',
+        w1: calculated_w2,
+        u0,
+        a0,
+        u1,
+        a1
     });
 }
-
 
 // --- 이벤트 리스너 등록 ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -526,140 +469,157 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const run2Inputs = [run2N1PreInput, run2U1Input, run2A1Input];
 
-    /* --- 입력값 유효성 검사 --- */
-    function validateRun1Inputs() {
-        const u0 = parseFloat(run1U0Input.value);
-        const a0 = parseFloat(run1A0Input.value);
-        const isValidU0 = !isNaN(u0) && u0 > 0;
-        const isValidA0 = !isNaN(a0) && a0 >= 0 && a0 < 360;
-        run1Btn.disabled = !(isValidU0 && isValidA0);
-    }
+    // 경고 메시지를 표시할 DOM 요소들
+    const warnRun1U0 = document.getElementById('warn_run1_u0');
+    const warnRun1A0 = document.getElementById('warn_run1_a0');
+    const warnRun2U1 = document.getElementById('warn_run2_u1');
+    const warnRun2A1 = document.getElementById('warn_run2_a1');
 
-    function validateRun2Inputs() {
-        const u1 = parseFloat(run2U1Input.value);
-        const a1 = parseFloat(run2A1Input.value);
-        const isValidU1 = !isNaN(u1) && u1 > 0;
-        const isValidA1 = !isNaN(a1) && a1 >= 0 && a1 < 360;
-        run2Btn.disabled = !(isValidU1 && isValidA1);
+    /* --- 유효성 검사 헬퍼 함수 --- */
+    function showWarning(warningElement, message) {
+        warningElement.innerText = message;
+        warningElement.style.display = 'block';
     }
-
+    function hideWarning(warningElement) {
+        warningElement.innerText = '';
+        warningElement.style.display = 'none';
+    }
+    function validateInput(inputEl, warningEl, min, max, label, isAngle = false) {
+        const value = parseFloat(inputEl.value);
+        if (isNaN(value)) {
+            if (warningEl) hideWarning(warningEl);
+            return false;
+        }
+        if (isAngle && value === 360) {
+            if (warningEl) showWarning(warningEl, `${label} 값은 0으로 입력해 주세요.`);
+            return true;
+        } else if (value < min || value >= max) {
+            if (warningEl) showWarning(warningEl, `${label} 값은 ${min} 이상 ${max} 미만이어야 합니다.`);
+            return false;
+        } else {
+            if (warningEl) hideWarning(warningEl);
+            return true;
+        }
+    }
     /* --- Run 1 입력 완료 여부 확인 --- */
     function isRun1FullyEntered() {
+        const u0Value = parseFloat(run1U0Input.value);
+        const a0Value = parseFloat(run1A0Input.value);
         return (
-            run1N1Input.value &&
-            run1U0Input.value.trim() &&
-            run1A0Input.value.trim()
+            !isNaN(u0Value) && u0Value > 0 && u0Value < 5 &&
+            !isNaN(a0Value) && a0Value >= 0 && a0Value < 360 &&
+            run1N1Input.value.trim() !== ''
         );
     }
+    /* --- 입력값 유효성 검사 및 버튼 활성화 --- */
+    function updateButtonStates() {
+        const isValidRun1U0 = validateInput(run1U0Input, warnRun1U0, 0, 5, 'U0');
+        const isValidRun1A0 = validateInput(run1A0Input, warnRun1A0, 0, 360, 'A0', true);
+        run1Btn.disabled = !(isValidRun1U0 && isValidRun1A0 && !isNaN(parseFloat(run1U0Input.value)) && !isNaN(parseFloat(run1A0Input.value)));
 
-    /* --- Run 2 입력 필드 접근 제한 --- */
-    let lastWarningTime = 0;
-
-    run2Inputs.forEach(input => {        
-        ['focus', 'click', 'touchstart'].forEach(eventType => {
-            input.addEventListener(eventType, (e) => {
-                const now = Date.now();
-
-                // 중복 방지를 위해 먼저 설정
-                if (now - lastWarningTime < 500) {
-                    e.preventDefault();
-                    input.blur();
-                    return;
-                }
-
-                if (!isRun1FullyEntered()) {
-                    lastWarningTime = now;  // 여기서 먼저 설정
-                    e.preventDefault();
-                    alert('Run 1 입력값을 모두 입력해주세요.');
-                    input.blur();
-                }
-            });
-        });
-
-        input.addEventListener('keydown', (e) => {
-            if (!isRun1FullyEntered()) {
-                e.preventDefault();
-            }
-        });
-
-        input.addEventListener('input', (e) => {
-            if (!isRun1FullyEntered()) {
-                input.value = '';
-            }
-        });
-    });
-
-    /* --- 입력값 변경 시 유효성 검사 --- */
-    run1U0Input.addEventListener('input', validateRun1Inputs);
-    run1A0Input.addEventListener('input', validateRun1Inputs);
-    run2U1Input.addEventListener('input', validateRun2Inputs);
-    run2A1Input.addEventListener('input', validateRun2Inputs);
-
-    // 초기 상태 유효성 검사
-    validateRun1Inputs();
-    validateRun2Inputs();
-
-    /* ---a0, a1 입력전 u0, u1 확인 --- */
-    function validatePriorInput(priorInputEl, msg) {
-        return (e) => {
-            const val = parseFloat(priorInputEl.value);
-            if (isNaN(val) || val <= 0) {
-                e.preventDefault();
-                alert(msg);
-                priorInputEl.focus();
-            }
-        };
+        const isRun1ReadyForRun2 = isRun1FullyEntered();
+        const isValidRun2U1 = validateInput(run2U1Input, warnRun2U1, 0, 5, 'U1');
+        const isValidRun2A1 = validateInput(run2A1Input, warnRun2A1, 0, 360, 'A1', true);
+        run2Btn.disabled = !(isRun1ReadyForRun2 && isValidRun2U1 && isValidRun2A1 && !isNaN(parseFloat(run2U1Input.value)) && !isNaN(parseFloat(run2A1Input.value)));
     }
-    // Run 1: A0 입력 전 U0 확인
-    run1A0Input.addEventListener('focus', validatePriorInput(
-        run1U0Input, '먼저 U0 값을 입력해 주세요.'
-    ));
-    run1A0Input.addEventListener('keydown', (e) => {
-        if (e.key === 'Tab') validatePriorInput(
-            run1U0Input, '먼저 U0 값을 입력해 주세요.')(e);
-    });
 
-    // Run 2: A1 입력 전 U1 확인 (단, Run 1 입력 완료 후에만 검사)
-    run2A1Input.addEventListener('focus', (e) => {
-        if (isRun1FullyEntered()) validatePriorInput(
-            run2U1Input, '먼저 U1 값을 입력해 주세요.')(e);
-    });
-    run2A1Input.addEventListener('keydown', (e) => {
-        if (e.key === 'Tab' && isRun1FullyEntered()) {
-            validatePriorInput(run2U1Input, '먼저 U1 값을 입력해 주세요.')(e);
+    /* --- Run 2 입력시 경고용 함수 --- */
+    const warnRun2IfRun1Incomplete = (e) => {
+        if (!isRun1FullyEntered()) {
+            // Run 1을 모두 입력하지 않은 경우
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            alert('Run 1 입력값을 모두 입력해주세요.');
+            // 포커스를 Run 1의 U0 입력 필드로 이동
+            setTimeout(() => {
+                run1U0Input.focus();
+            }, 0);
         }
+    };
+    // Run 2의 n1/u1/a1에 대해 클릭·포커스·Tab 이동 시 경고 함수 등록
+    run2Inputs.forEach((input) => {
+        input.addEventListener('click', warnRun2IfRun1Incomplete);
+        input.addEventListener('focus', warnRun2IfRun1Incomplete);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                warnRun2IfRun1Incomplete(e);
+            }
+        });
     });
 
-    /* --- 실시간 제한 + 경고 메시지 출력 --- */
-    const enforceMaxWithWarning = (inputId, warningId, max, label = "입력값") => {
-        const input = document.getElementById(inputId);
-        const warning = document.getElementById(warningId);
-
-        input.addEventListener('input', () => {
-            const value = parseFloat(input.value);
-
-            if (isNaN(value)) {
-                warning.innerText = '';
-                warning.style.display = 'none';
+    /* --- 입력 필드 이벤트 리스너 통합 --- */
+    const setupInputValidation = (inputEl, warningEl, min, max, label, isAngle = false, priorInputEl = null, priorMsg = '') => {
+        // 실시간 입력 시 버튼 상태 업데이트
+        inputEl.addEventListener('input', () => {
+            updateButtonStates();
+        });
+        // blur: Run 1 미완료 상태에서 Run 2 필드 벗어나지 못하게 함
+        inputEl.addEventListener('blur', () => {
+            if (inputEl.id.startsWith('run2_') && !isRun1FullyEntered()) {
+                inputEl.value = '';
+                run1U0Input.focus();
                 return;
             }
-
-            if (value === 360 && inputId.includes('a')) {
-                warning.innerText = `${label} 값을 0 으로 입력해 주세요.`;
-                warning.style.display = 'block';
-            } else if (value > max) {
-                warning.innerText = `${label}의 최대값은 ${max}입니다. 최대값 범위를 초과했어요. 
-                    ${max} 이하로 다시 입력해 주세요.`;
-                warning.style.display = 'block';
-            } else {
-                warning.innerText = '';
-                warning.style.display = 'none';
+            // 선행 입력 필드 검사
+            if (priorInputEl) {
+                const priorValue = parseFloat(priorInputEl.value);
+                if (isNaN(priorValue) || priorValue <= 0 || (priorInputEl.id.includes('run1_u0') && priorValue >= 5)) {
+                    alert(priorMsg);
+                    inputEl.value = '';
+                    priorInputEl.focus();
+                    return;
+                }
+            }
+            const isValid = validateInput(inputEl, warningEl, min, max, label, isAngle);
+            if (!isValid) {
+                inputEl.focus();
+            }
+        });
+        // focus: Run 1 미완료 시 Run 2 필드 클릭/포커스 차단 (추가 경고는 warnRun2IfRun1Incomplete에서)
+        inputEl.addEventListener('focus', (e) => {
+            if (inputEl.id.startsWith('run2_') && !isRun1FullyEntered()) {
+                e.preventDefault();
+                // 실제 경고는 warnRun2IfRun1Incomplete에서 처리됨
+                return;
+            }
+            if (priorInputEl) {
+                const priorValue = parseFloat(priorInputEl.value);
+                if (isNaN(priorValue) || priorValue <= 0 || (priorInputEl.id.includes('run1_u0') && priorValue >= 5)) {
+                    e.preventDefault();
+                    alert(priorMsg);
+                    priorInputEl.focus();
+                }
+            }
+        });
+        // keydown: Tab 이동 시 체크
+        inputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                if (inputEl.id.startsWith('run2_') && !isRun1FullyEntered()) {
+                    e.preventDefault();
+                    return;
+                }
+                if (priorInputEl) {
+                    const priorValue = parseFloat(priorInputEl.value);
+                    if (isNaN(priorValue) || priorValue <= 0 || (priorInputEl.id.includes('run1_u0') && priorValue >= 5)) {
+                        e.preventDefault();
+                        alert(priorMsg);
+                        priorInputEl.focus();
+                        return;
+                    }
+                }
+                const isValid = validateInput(inputEl, warningEl, min, max, label, isAngle);
+                if (!isValid) {
+                    e.preventDefault();
+                }
             }
         });
     };
+    // 각 입력 필드에 유효성 검사 설정
+    setupInputValidation(run1U0Input, warnRun1U0, 0, 5, 'U0');
+    setupInputValidation(run1A0Input, warnRun1A0, 0, 360, 'A0', true, run1U0Input, '먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
+    setupInputValidation(run2U1Input, warnRun2U1, 0, 5, 'U1');
+    setupInputValidation(run2A1Input, warnRun2A1, 0, 360, 'A1', true, run2U1Input, '먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
 
-    enforceMaxWithWarning('run1_u0', 'warn_run1_u0', 4.9, 'u0');
-    enforceMaxWithWarning('run1_a0', 'warn_run1_a0', 359, 'a0');
-    enforceMaxWithWarning('run2_u1', 'warn_run2_u1', 4.9, 'u0');
-    enforceMaxWithWarning('run2_a1', 'warn_run2_a1', 359, 'a0');
+    // 초기 버튼 상태 업데이트
+    updateButtonStates();
 });
