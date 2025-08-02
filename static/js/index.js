@@ -365,7 +365,7 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
             html: true,
             sanitize: false,
             container: 'body',
-            trigger: 'click focus',
+            trigger: 'focus',
             popperConfig: {
                 modifiers: [
                     { name: 'flip', enabled: false },
@@ -411,9 +411,33 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
             }
         });
 
-        btn.addEventListener('touchstart', e => {
-            e.preventDefault();
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById(popoverBtnId);  // 본인 ID로 교체
+            const pop = new bootstrap.Popover(btn, {
+                html: true,
+                sanitize: false,
+                container: 'body',
+                trigger: 'manual'
+            });
+
+            // 버튼 클릭/터치로 토글
+            btn.addEventListener('click', e => {
                 pop.toggle();
+            });
+
+            // 전역에서 포인터 다운(=마우스·터치) 이벤트 잡아서 팝오버 닫기
+            ['pointerdown', 'touchstart'].forEach(evtName => {
+                document.addEventListener(evtName, e => {
+                // 현재 표시 중인 팝오버 요소(.popover.show) 찾기
+                const popEl = document.querySelector('.popover.show');
+                if (!popEl) return;
+
+                // 버튼 안이 아니거나, 팝오버 내용 안을 클릭해도 닫기
+                if (!btn.contains(e.target) || popEl.contains(e.target)) {
+                    pop.hide();
+                }
+                }, { capture: true });
+            });
         });
     }, 100);
 
