@@ -709,18 +709,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    run2A1Input.addEventListener('mousedown', e => {
-        if (!isRun1FullyEntered()) {
-            guardRun1(e);
-            e.preventDefault();
-        } else {
-            guardRun2U1(e);
-            e.preventDefault();
-        }
-    });
-    run2A1Input.addEventListener('focus',   guardRun2U1);
-    run2A1Input.addEventListener('keydown', e => { if (e.key==='Tab') guardRun2U1(e); });
-
     function guardRun1U0(e) {
         const u0 = parseFloat(run1U0Input.value);
         if (isNaN(u0) || u0 <= 0 || u0 >= 5) {
@@ -735,7 +723,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     run1A0Input.addEventListener('focus',    guardRun1U0);
     run1A0Input.addEventListener('keydown',  e => { if (e.key==='Tab') guardRun1U0(e); });
-    run1A0Input.addEventListener('mousedown', e => { guardRun1U0(e); e.preventDefault(); });
+    run1A0Input.addEventListener('mousedown', e => { 
+        const u0 = parseFloat(run1U0Input.value);
+        if (isNaN(u0) || u0 <= 0 || u0 >= 5) {
+            guardRun1U0(e); 
+            e.preventDefault(); 
+        }
+    });
+
+    run2A1Input.addEventListener('focus',   guardRun2U1);
+    run2A1Input.addEventListener('keydown', e => { if (e.key==='Tab') guardRun2U1(e); });
+    run2A1Input.addEventListener('mousedown', e => {
+        if (!isRun1FullyEntered()) {
+            guardRun1(e);
+            e.preventDefault();
+        } else {
+            const u1 = parseFloat(run2U1Input.value);
+            if (isNaN(u1) || u1 <= 0 || u1 >= 5) {
+                guardRun2U1(e);
+                e.preventDefault();
+            }
+        };
+    });
 
     updateButtonStates();
 
