@@ -293,7 +293,7 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
     const weightCount = countWeightTypes(combination);
     let weightSummary = '<div class="list-group-item"><strong>Weight Usage Count</strong><div>';
     for (const [label, cnt] of Object.entries(weightCount)) {
-        if (cnt > 0) weightSummary += `<li>${label}: ${cnt} ea</li>`;
+        if (cnt > 0) weightSummary += `<li class="list-unstyled">${label}: ${cnt} ea</li>`;
     }
     weightSummary += '</div></div>';
 
