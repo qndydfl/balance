@@ -326,7 +326,6 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
                                 class="btn btn-sm btn-danger mt-2"
                                 id="${popoverBtnId}"
                                 data-bs-toggle="popover"
-                                data-bs-trigger="click focus"
                                 data-bs-title="<strong>${title} (${n1}%)</strong>"
                                 data-bs-html="true"
                                 data-bs-content=""
@@ -366,7 +365,7 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
             html: true,
             sanitize: false,
             container: 'body',
-            trigger: 'focus',
+            trigger: 'click focus',
             popperConfig: {
                 modifiers: [
                     { name: 'flip', enabled: false },
@@ -410,6 +409,11 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
             if (modalContent) {
                 modalContent.style.filter = '';
             }
+        });
+
+        btn.addEventListener('touchstart', e => {
+            e.preventDefault();
+                pop.toggle();
         });
     }, 100);
 
@@ -661,7 +665,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* --- Run1 미완료 시 Run2 접근 차단 --- */
     function guardRun1(e) {
         if (!isRun1FullyEntered()) {
-            alert('먼저 Run1 입력을 입력하세요.');
+            alert('먼저 Run 1를 입력하세요.');
             bootstrap.Tab
                 .getOrCreateInstance(document.getElementById('run1-tab'))
                 .show();
