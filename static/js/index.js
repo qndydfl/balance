@@ -345,7 +345,7 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
         if (!btn) return;
 
         const contentHTML = `
-            <div class="text-center"
+            <div id="popover-content-${popoverBtnId}" class="text-center"
                 style="max-height: 100%; overflow-y: auto; width: 20rem; max-width: 90vw;">
                 <div class="">
                     <div><strong>Target Weight</strong>: ${weightUsed.toFixed(2)} grams</div>
@@ -401,6 +401,23 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
             if (modalContent) {
                 modalContent.style.filter = 'blur(5px)';
             }
+            // setTimeout(() => {
+            //     const closeBtn = document.getElementById('close-popover-btn');
+            //     if (closeBtn) {
+            //         closeBtn.addEventListener('click', () => {
+            //             pop.hide();
+            //         });
+            //     }
+            // }, 10);
+            setTimeout(() => {
+                const popoverContentEl = document.getElementById(`popover-content-${popoverBtnId}`);
+                if (popoverContentEl) {
+                    popoverContentEl.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pop.hide();
+                    });
+                }
+            }, 10);
         });
 
         btn.addEventListener('hidden.bs.popover', () => {
