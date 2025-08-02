@@ -74,12 +74,14 @@
                                     </h4>
                                 </div>
                                 <p class="mb-0 fst-italic text-secondary">
-                                    Revision Date : JUL25, Revision No: 01
+                                    Revision Date : AUG 25, Revision No: 02
                                 </p>
                                 <div class="text-warning my-3 text-decoration-underline">
                                     CF6-80 Series Engine
                                 </div>
-                                <p class="text-end mb-0 pe-2 text-success">Create by yj/kim</p>
+                                <p class="text-end mb-0 pe-2 text-success">
+                                    © yj/kim JUL 2025. All rights reserved.
+                                </p>
                             </div>
 
                             <div class="pt-0 pb-2 rounded">
@@ -150,8 +152,14 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="run1_u0" class="form-label"
-                                                        >Amplitude (U0) (units)</label
+                                                        >Amplitude (U0) (units)
+                                                    </label
                                                     >
+                                                    <div
+                                                        id="warn_run1_u0"
+                                                        class="text-danger small mt-1"
+                                                        style="display: none"
+                                                    ></div>
                                                     <input
                                                         type="number"
                                                         class="form-control custom-input-colored"
@@ -160,17 +168,18 @@
                                                         step="0.1"
                                                         min="0"
                                                         max="4.9"
-                                                    />
-                                                    <div
-                                                        id="warn_run1_u0"
-                                                        class="text-danger small mt-1"
-                                                        style="display: none"
-                                                    ></div>
+                                                    />                                                    
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="run1_a0" class="form-label"
-                                                        >Phase Angle (A0) (°)</label
+                                                        >Phase Angle (A0) (°)
+                                                    </label
                                                     >
+                                                    <div
+                                                        id="warn_run1_a0"
+                                                        class="text-danger small mt-1"
+                                                        style="display: none"
+                                                    ></div>
                                                     <input
                                                         type="number"
                                                         class="form-control custom-input-colored"
@@ -178,12 +187,7 @@
                                                         placeholder="ex, 80"
                                                         min="0"
                                                         max="360"
-                                                    />
-                                                    <div
-                                                        id="warn_run1_a0"
-                                                        class="text-danger small mt-1"
-                                                        style="display: none"
-                                                    ></div>
+                                                    />                                                    
                                                 </div>
                                             </div>
 
@@ -215,19 +219,31 @@
                                                     <label
                                                         for="run2_n1_pre"
                                                         class="form-label"
-                                                        >N1 (%)</label
+                                                        >N1 (%)
+                                                    </label
                                                     >
+                                                    <div
+                                                        id="warn_run2_n1"
+                                                        class="text-danger small mt-1"
+                                                        style="display: none"
+                                                    ></div>
                                                     <input
                                                         type="text"
                                                         class="form-control custom-input-colored"
                                                         id="run2_n1_pre"
                                                         readonly
-                                                    />
+                                                    />                                                    
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="run2_u1" class="form-label"
-                                                        >Amplitude (U1) (units)</label
+                                                        >Amplitude (U1) (units)
+                                                    </label
                                                     >
+                                                    <div
+                                                        id="warn_run2_u1"
+                                                        class="text-danger small mt-1"
+                                                        style="display: none"
+                                                    ></div>
                                                     <input
                                                         type="number"
                                                         class="form-control custom-input-colored"
@@ -236,17 +252,18 @@
                                                         min="0"
                                                         max="4.9"
                                                         step="0.1"
-                                                    />
-                                                    <div
-                                                        id="warn_run2_u1"
-                                                        class="text-danger small mt-1"
-                                                        style="display: none"
-                                                    ></div>
+                                                    />                                                    
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="run2_a1" class="form-label"
-                                                        >Phase Angle (A1) (°)</label
+                                                        >Phase Angle (A1) (°)
+                                                    </label
                                                     >
+                                                    <div
+                                                        id="warn_run2_a1"
+                                                        class="text-danger small mt-1"
+                                                        style="display: none"
+                                                    ></div>
                                                     <input
                                                         type="number"
                                                         class="form-control custom-input-colored"
@@ -254,12 +271,7 @@
                                                         placeholder="ex, 148"
                                                         min="0"
                                                         max="360"
-                                                    />
-                                                    <div
-                                                        id="warn_run2_a1"
-                                                        class="text-danger small mt-1"
-                                                        style="display: none"
-                                                    ></div>
+                                                    />                                                    
                                                 </div>
                                             </div>
                                             <div class="text-center">
