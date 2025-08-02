@@ -318,7 +318,6 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
                         Center Hole Number : <span class="badge bg-primary">${holeNumberStr}</span><br>
                         Total Weight Count : <span class="badge bg-secondary">${combination.length}</span><br>
                     </div>
-                    <div>
                         ${weightSummary}
                         <div class="d-flex justify-content-center mt-2">
                             <button
@@ -328,6 +327,8 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
                                 data-bs-toggle="popover"
                                 data-bs-title="<strong>${title} (${n1}%)</strong>"
                                 data-bs-html="true"
+                                data-bs-trigger="click"
+                                tabindex="0"
                                 data-bs-content=""
                             >
                                 상세 정보 보기
@@ -365,7 +366,7 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
             html: true,
             sanitize: false,
             container: 'body',
-            trigger: 'focus',
+            trigger: 'click',
             popperConfig: {
                 modifiers: [
                     { name: 'flip', enabled: false },
@@ -409,35 +410,6 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
             if (modalContent) {
                 modalContent.style.filter = '';
             }
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById(popoverBtnId);  // 본인 ID로 교체
-            const pop = new bootstrap.Popover(btn, {
-                html: true,
-                sanitize: false,
-                container: 'body',
-                trigger: 'manual'
-            });
-
-            // 버튼 클릭/터치로 토글
-            btn.addEventListener('click', e => {
-                pop.toggle();
-            });
-
-            // 전역에서 포인터 다운(=마우스·터치) 이벤트 잡아서 팝오버 닫기
-            ['pointerdown', 'touchstart'].forEach(evtName => {
-                document.addEventListener(evtName, e => {
-                // 현재 표시 중인 팝오버 요소(.popover.show) 찾기
-                const popEl = document.querySelector('.popover.show');
-                if (!popEl) return;
-
-                // 버튼 안이 아니거나, 팝오버 내용 안을 클릭해도 닫기
-                if (!btn.contains(e.target) || popEl.contains(e.target)) {
-                    pop.hide();
-                }
-                }, { capture: true });
-            });
         });
     }, 100);
 
