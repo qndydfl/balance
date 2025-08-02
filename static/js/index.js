@@ -356,6 +356,7 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
                     <hr>
                     ${table}                    
                 </div>
+                <button id="close-popover-btn" class="btn btn-secondary btn-sm mt-2">닫기</button>
             </div>
         `;
         btn.setAttribute('data-bs-content', contentHTML);
@@ -401,19 +402,10 @@ function generateResultHTML({ n1, holeNumberStr, combinationObj, title,
             if (modalContent) {
                 modalContent.style.filter = 'blur(5px)';
             }
-            // setTimeout(() => {
-            //     const closeBtn = document.getElementById('close-popover-btn');
-            //     if (closeBtn) {
-            //         closeBtn.addEventListener('click', () => {
-            //             pop.hide();
-            //         });
-            //     }
-            // }, 10);
             setTimeout(() => {
-                const popoverContentEl = document.getElementById(`popover-content-${popoverBtnId}`);
-                if (popoverContentEl) {
-                    popoverContentEl.addEventListener('click', (e) => {
-                        e.stopPropagation();
+                const closeBtn = document.getElementById('close-popover-btn');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', () => {
                         pop.hide();
                     });
                 }
