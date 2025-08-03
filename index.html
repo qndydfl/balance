@@ -30,6 +30,18 @@
             rel="stylesheet"
         />
 
+        <!-- alert custom -->
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.22.2/sweetalert2.min.js"
+            integrity="sha512-2bCb2rCmddSPBLbYUoGR9R+gmLU/kaoYiTM4OVG3Jz+6E26MTzdozuEYt5j3X60ueQ9x6Xufz7y3jhmrHiHLZg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+        <link rel="stylesheet" 
+            href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.22.2/sweetalert2.css" integrity="sha512-aZNBVcDIrRR7lLUG3UsYBKkl9C0hJHhrXiPdUookOGZQB4h9g2dB48O+BfWjRPWZcVShQW76xtCwgGrliVu5sg==" crossorigin="anonymous" 
+            referrerpolicy="no-referrer" 
+        />
+
         <!-- custom -->
         <link rel="stylesheet" href="static/css/index.css" />
         <script defer src="static/js/index.js"></script>
@@ -61,27 +73,29 @@
             </div>
         </div>
         <!-- modal 끝 -->
-        
+
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 col-lg custom-size">
                     <div class="rounded custom-bg">
                         <div class="p-2 pt-1">
                             <div class="text-center">
-                                <div class="border rounded-2 bg-success py-2 my-3">
-                                    <h4 class="text-white mb-0">
+                                <div class="border rounded-2 custom-title py-3 mt-3">
+                                    <p class="fs-2 text-white mb-2">
                                         Fan Trim Balance Calculator<br />
-                                    </h4>
+                                    </p>
+                                    <p class="fs-5 text-warning mb-0 text-decoration-underline">
+                                        CF6-80 Series Engine
+                                    </p>
                                 </div>
-                                <div class="text-warning my-4 text-decoration-underline">
-                                    CF6-80 Series Engine
+                                <div class="my-4 text-end me-1">
+                                    <p class="text-secondary mb-0 fst-italic">
+                                        Rev. Date : AUG 2025, Rev. No: 1.0.2
+                                    </p>
+                                    <p class="my-0 text-success">
+                                        Create by yj/kim, JUL 2025
+                                    </p>
                                 </div>
-                                <p class="mb-0 fst-italic text-secondary">
-                                    Revision Date : AUG 25, Revision No: 02
-                                </p>
-                                <p class="text-end my-1 text-success">
-                                    Create by yj/kim, JUL 2025
-                                </p>
                             </div>
 
                             <div class="pt-0 pb-2 rounded">
@@ -137,24 +151,32 @@
                                             <h5>Fan Rotor Balance (Run 1)</h5>
                                             <div class="row g-2 text-secondary">
                                                 <div class="col-md-4">
-                                                    <label for="run1_n1" class="form-label"
+                                                    <label
+                                                        for="run1_n1"
+                                                        class="form-label"
                                                         >N1 (%)</label
                                                     >
                                                     <select
                                                         class="form-select custom-input-colored"
                                                         id="run1_n1"
                                                     >
-                                                        <option value="95">95%</option>
-                                                        <option value="99" selected>
+                                                        <option value="95">
+                                                            95%
+                                                        </option>
+                                                        <option
+                                                            value="99"
+                                                            selected
+                                                        >
                                                             99%
                                                         </option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="run1_u0" class="form-label"
+                                                    <label
+                                                        for="run1_u0"
+                                                        class="form-label"
                                                         >Amplitude (U0) (units)
-                                                    </label
-                                                    >
+                                                    </label>
                                                     <div
                                                         id="warn_run1_u0"
                                                         class="text-danger small mt-1"
@@ -168,13 +190,14 @@
                                                         step="0.1"
                                                         min="0"
                                                         max="4.9"
-                                                    />                                                    
+                                                    />
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="run1_a0" class="form-label"
+                                                    <label
+                                                        for="run1_a0"
+                                                        class="form-label"
                                                         >Phase Angle (A0) (°)
-                                                    </label
-                                                    >
+                                                    </label>
                                                     <div
                                                         id="warn_run1_a0"
                                                         class="text-danger small mt-1"
@@ -187,7 +210,7 @@
                                                         placeholder="ex, 80"
                                                         min="0"
                                                         max="360"
-                                                    />                                                    
+                                                    />
                                                 </div>
                                             </div>
 
@@ -220,8 +243,7 @@
                                                         for="run2_n1_pre"
                                                         class="form-label"
                                                         >N1 (%)
-                                                    </label
-                                                    >
+                                                    </label>
                                                     <div
                                                         id="warn_run2_n1"
                                                         class="text-danger small mt-1"
@@ -232,13 +254,14 @@
                                                         class="form-control custom-input-colored"
                                                         id="run2_n1_pre"
                                                         readonly
-                                                    />                                                    
+                                                    />
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="run2_u1" class="form-label"
+                                                    <label
+                                                        for="run2_u1"
+                                                        class="form-label"
                                                         >Amplitude (U1) (units)
-                                                    </label
-                                                    >
+                                                    </label>
                                                     <div
                                                         id="warn_run2_u1"
                                                         class="text-danger small mt-1"
@@ -252,13 +275,14 @@
                                                         min="0"
                                                         max="4.9"
                                                         step="0.1"
-                                                    />                                                    
+                                                    />
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="run2_a1" class="form-label"
+                                                    <label
+                                                        for="run2_a1"
+                                                        class="form-label"
                                                         >Phase Angle (A1) (°)
-                                                    </label
-                                                    >
+                                                    </label>
                                                     <div
                                                         id="warn_run2_a1"
                                                         class="text-danger small mt-1"
@@ -271,7 +295,7 @@
                                                         placeholder="ex, 148"
                                                         min="0"
                                                         max="360"
-                                                    />                                                    
+                                                    />
                                                 </div>
                                             </div>
                                             <div class="text-center">

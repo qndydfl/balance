@@ -551,16 +551,276 @@ function calculateRun2() {
 }
 
 // --- 이벤트 리스너 등록 ---
+// document.addEventListener('DOMContentLoaded', () => {
+//     /* --- Run 1, Run 2 입력 요소 참조 --- */
+//     const run1N1Input    = document.getElementById('run1_n1');
+//     const run1U0Input    = document.getElementById('run1_u0');
+//     const run1A0Input    = document.getElementById('run1_a0');
+//     const run1Btn        = document.getElementById('calculateRun1Btn');
+//     const run2N1PreInput = document.getElementById('run2_n1_pre');
+//     const run2U1Input    = document.getElementById('run2_u1');
+//     const run2A1Input    = document.getElementById('run2_a1');
+//     const run2Btn        = document.getElementById('calculateRun2Btn');
+
+//     /* --- 인라인 경고 DOM --- */
+//     const warnRun1U0 = document.getElementById('warn_run1_u0');
+//     const warnRun1A0 = document.getElementById('warn_run1_a0');
+//     const warnRun2U1 = document.getElementById('warn_run2_u1');
+//     const warnRun2A1 = document.getElementById('warn_run2_a1');
+    
+//     /* --- alert custom ---*/
+//     function showWarningPopup(htmlMsg) {
+//         return Swal.fire({
+//             icon: 'warning',
+//             title: '알림',
+//             html: htmlMsg,
+//             confirmButtonText: '확인'
+//         });
+//     }
+
+//     /* --- 유효성 검사 헬퍼 --- */
+//     function showWarning(el, msg) { el.innerText = msg; el.style.display = 'block'; }
+//     function hideWarning(el)    { el.innerText = ''; el.style.display = 'none'; }
+//     function validateInput(inputEl, warningEl, min, max, label, isAngle = false) {
+//         const v = parseFloat(inputEl.value);
+//         // 값이 숫자가 아니면 메시지 없이 false 반환
+//         if (isNaN(v)) {
+//             return false;
+//         }
+
+//         // 각도 값 360 예외 처리 (메시지 표시 제거)
+//         if (isAngle && v === 360) {
+//             return true;
+//         }
+
+//         // 값의 범위 확인 (메시지 표시 제거)
+//         if (v < min || v >= max) {
+//             return false;
+//         }
+
+//         // 모든 조건을 통과하면 true 반환
+//         return true;
+//     }
+
+//     /* --- Run1 완료 여부 --- */
+//     function isRun1FullyEntered() {
+//         const u0 = parseFloat(run1U0Input.value);
+//         const a0 = parseFloat(run1A0Input.value);
+//         return !isNaN(u0) && u0 > 0 && u0 < 5
+//             && !isNaN(a0) && a0 >= 0 && a0 < 360
+//             && run1N1Input.value.trim() !== '';
+//     }
+
+//     /* --- 버튼 활성/비활성 토글 --- */
+//     function updateButtonStates() {
+//         const v1 = validateInput(run1U0Input, warnRun1U0, 0, 5, 'U0');
+//         const v2 = validateInput(run1A0Input, warnRun1A0, 0, 360, 'A0', true);
+//         run1Btn.disabled = !(v1 && v2);
+
+//         const v3 = validateInput(run2U1Input, warnRun2U1, 0, 5, 'U1');
+//         const v4 = validateInput(run2A1Input, warnRun2A1, 0, 360, 'A1', true);
+//         run2Btn.disabled = !(isRun1FullyEntered() && v3 && v4);
+//     }
+
+//     /* --- 공통 prior-validation 세팅 --- */
+//     function setupInputValidation(
+//         inputEl, warningEl, min, max, label,
+//         isAngle = false, priorEl = null, priorMsg = ''
+//     ) {
+//         inputEl.dataset.priorWarned = 'false';
+//         inputEl.addEventListener('input', () => {
+//             updateButtonStates();
+//             inputEl.dataset.priorWarned = 'false';
+//         });
+
+//         inputEl.addEventListener('blur', e => {
+//             if (!isRun1FullyEntered()) return;
+//             if (priorEl) {
+//                 const pv = parseFloat(priorEl.value);
+//                 if (isNaN(pv) || pv <= 0 || (priorEl === run1U0Input && pv >= 5)) {
+//                     if (inputEl.dataset.priorWarned === 'false') {
+//                         alert(priorMsg);
+//                         inputEl.dataset.priorWarned = 'true';
+//                     }
+//                     inputEl.value = '';
+//                     priorEl.focus();
+//                     return;
+//                 }
+//             }
+//             if (!validateInput(inputEl, warningEl, min, max, label, isAngle)) {
+//                 inputEl.focus();
+//             }
+//         });
+
+//         inputEl.addEventListener('keydown', e => {
+//             if (!isRun1FullyEntered()) return;
+//             if (e.key === 'Tab' && priorEl) {
+//                 const pv = parseFloat(priorEl.value);
+//                 if (isNaN(pv) || pv <= 0 || (priorEl === run1U0Input && pv >= 5)) {
+//                     if (inputEl.dataset.priorWarned === 'false') {
+//                         alert(priorMsg);
+//                         inputEl.dataset.priorWarned = 'true';
+//                     }
+//                     e.preventDefault();
+//                     priorEl.focus();
+//                 }
+//             }
+//         });
+//     }
+
+//     // U0 → A0, U1 → A1 순서 강제
+//     setupInputValidation(
+//         run1U0Input, warnRun1U0, 0, 5, 'U0'
+//     );
+//     setupInputValidation(
+//         run2U1Input, warnRun2U1, 0, 5, 'U1'
+//     );
+
+//     /* --- Run1 미완료 시 Run2 접근 차단 --- */
+//     async function guardRun1(e) {
+//         if (!isRun1FullyEntered()) {
+//             await showWarningPopup(
+//                 `<span style="color:blue">먼저 Run 1</strong> 값을 입력하세요.<br>
+//                 Run 1 입력란으로 이동합니다.</span>`
+//             );
+//             bootstrap.Tab
+//             .getOrCreateInstance(document.getElementById('run1-tab'))
+//             .show();
+//             e.target.blur();
+//         }
+//     }
+
+//     async function guardRun1U0(e) {
+//         const u0 = parseFloat(run1U0Input.value);
+//         if (isNaN(u0) || u0 <= 0 || u0 >= 5) {
+//             await showWarningPopup('먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
+//             bootstrap.Tab
+//                 .getOrCreateInstance(document.getElementById('run1-tab'))
+//                 .show();
+//             run1U0Input.focus();
+//             if (e.type === 'keydown') e.preventDefault();
+//             else                       e.target.blur();
+//         }
+//     }
+    
+//     run1U0Input.addEventListener('keydown', async e => {
+//         if (e.key === 'Tab') {
+//             const u0 = parseFloat(run1U0Input.value);
+//             if (isNaN(u0) || u0 <= 0 || u0 >= 5) {
+//                 e.preventDefault(); 
+//                 await showWarningPopup('먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
+//                 run1U0Input.focus(); 
+//             }
+//         }
+//     });
+//     run1A0Input.addEventListener('keydown',  async e => { 
+//         if (e.key==='Tab') {
+//             await guardRun1U0(e); 
+//         }
+//     });
+//     run1A0Input.addEventListener('mousedown', e => { 
+//         guardRun1U0(e); if (!isRun1FullyEntered()) e.preventDefault();
+//     });
+
+//     [run2N1PreInput, run2U1Input, run2A1Input].forEach(el =>
+//         el.addEventListener('focus', guardRun1)
+//     );
+
+//     run2U1Input.addEventListener('keydown', async e => {
+//         if (!isRun1FullyEntered()) return;
+//         if (e.key === 'Tab') {
+//             const u1 = parseFloat(run2U1Input.value);
+//             if (isNaN(u1) || u1 <= 0 || u1 >= 5) {
+//                 e.preventDefault();
+//                 await showWarningPopup('먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
+//                 run2U1Input.focus();
+//             }
+//         }
+//     });
+
+//     async function guardRun2U1(e) {
+//         if (!isRun1FullyEntered()) return;
+//         const u1 = parseFloat(run2U1Input.value);
+//         if (isNaN(u1) || u1 <= 0 || u1 >= 5) {
+//             await showWarningPopup('먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
+//             bootstrap.Tab
+//                 .getOrCreateInstance(document.getElementById('run2-tab'))
+//                 .show();
+//             run2U1Input.focus();
+//             if (e.type === 'keydown') e.preventDefault();
+//             else                       e.target.blur();
+//         }
+//     }
+
+//     run2A1Input.addEventListener('focus',   guardRun2U1);
+//     run2A1Input.addEventListener('keydown', e => { if (e.key==='Tab') guardRun2U1(e); });
+//     run2A1Input.addEventListener('mousedown', e => {
+//         if (!isRun1FullyEntered()) {
+//             guardRun1(e);
+//             e.preventDefault();
+//         } else {
+//             guardRun2U1(e);
+//             e.preventDefault();
+//         };
+//     });
+//     updateButtonStates();
+
+//     /* --- a0, a1 alert 메시지 --- */
+//     run1A0Input.addEventListener('blur', async e => {
+//         const v = parseFloat(e.target.value);
+//         const u0 = parseFloat(run1U0Input.value);
+//         if (isNaN(u0) || u0 <= 0 || u0 >= 5) {
+//             e.target.value = '';
+//             await showWarningPopup('먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
+//             run1U0Input.focus();
+//             return;
+//         }
+
+//         if (v === 360) {
+//             showWarning(warnRun1A0, `A0 값은 0으로 입력해 주세요.`);
+//             e.target.value = '0';
+//         } else if (isNaN(v) || v < 0 || v >= 360) {
+//             await showWarningPopup('A0 값은 0 이상 360 이하여야 합니다.');
+//             e.target.focus();
+//         } else {
+//             hideWarning(warnRun1A0);
+//         }
+//         updateButtonStates();
+//     });
+
+//     run2A1Input.addEventListener('blur', async e => {
+//         const v = parseFloat(e.target.value);
+//         const u1 = parseFloat(run2U1Input.value);
+//         if (isNaN(u1) || u1 <= 0 || u1 >= 5) {
+//             e.target.value = '';
+//             await showWarningPopup('먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
+//             run2U1Input.focus();
+//             return;
+//         }
+
+//         if (v === 360) {
+//             showWarning(warnRun2A1, `A1 값은 0으로 입력해 주세요.`);
+//             e.target.value = '0';
+//         } else if (isNaN(v) || v < 0 || v >= 360) {
+//             await showWarningPopup('A1 값은 0 이상 360 이하여야 합니다.');
+//             e.target.focus();
+//         } else {
+//             hideWarning(warnRun2A1);
+//         }
+//         updateButtonStates();
+//     });
+// });
+
 document.addEventListener('DOMContentLoaded', () => {
     /* --- Run 1, Run 2 입력 요소 참조 --- */
-    const run1N1Input    = document.getElementById('run1_n1');
-    const run1U0Input    = document.getElementById('run1_u0');
-    const run1A0Input    = document.getElementById('run1_a0');
-    const run1Btn        = document.getElementById('calculateRun1Btn');
+    const run1N1Input = document.getElementById('run1_n1');
+    const run1U0Input = document.getElementById('run1_u0');
+    const run1A0Input = document.getElementById('run1_a0');
+    const run1Btn = document.getElementById('calculateRun1Btn');
     const run2N1PreInput = document.getElementById('run2_n1_pre');
-    const run2U1Input    = document.getElementById('run2_u1');
-    const run2A1Input    = document.getElementById('run2_a1');
-    const run2Btn        = document.getElementById('calculateRun2Btn');
+    const run2U1Input = document.getElementById('run2_u1');
+    const run2A1Input = document.getElementById('run2_a1');
+    const run2Btn = document.getElementById('calculateRun2Btn');
 
     /* --- 인라인 경고 DOM --- */
     const warnRun1U0 = document.getElementById('warn_run1_u0');
@@ -568,40 +828,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const warnRun2U1 = document.getElementById('warn_run2_u1');
     const warnRun2A1 = document.getElementById('warn_run2_a1');
 
+    /* --- alert custom ---*/
+    function showWarningPopup(htmlMsg) {
+        return Swal.fire({
+            icon: 'warning',
+            title: '알림',
+            html: htmlMsg,
+            confirmButtonText: '확인'
+        });
+    }
+
     /* --- 유효성 검사 헬퍼 --- */
     function showWarning(el, msg) { el.innerText = msg; el.style.display = 'block'; }
-    function hideWarning(el)    { el.innerText = ''; el.style.display = 'none'; }
-    function validateInput(inputEl, warningEl, min, max, label, isAngle = false) {
+    function hideWarning(el) { el.innerText = ''; el.style.display = 'none'; }
+    function validateInput(inputEl, min, max, isAngle = false) {
         const v = parseFloat(inputEl.value);
-        if (isNaN(v)) { hideWarning(warningEl); return false; }
-        if (isAngle && v === 360) {
-            showWarning(warningEl, `${label} 값은 0으로 입력해 주세요.`);
-            return true;
-        } else if (v < min || v >= max) {
-            showWarning(warningEl, `${label} 값은 ${min} 이상 ${max} 미만이어야 합니다.`);
+        if (isNaN(v)) {
             return false;
         }
-        hideWarning(warningEl);
-        return true;
+        if (isAngle && v === 360) {
+            return true;
+        }
+        return v >= min && v < max;
     }
 
     /* --- Run1 완료 여부 --- */
     function isRun1FullyEntered() {
-        const u0 = parseFloat(run1U0Input.value);
-        const a0 = parseFloat(run1A0Input.value);
-        return !isNaN(u0) && u0 > 0 && u0 < 5
-            && !isNaN(a0) && a0 >= 0 && a0 < 360
-            && run1N1Input.value.trim() !== '';
+        return validateInput(run1U0Input, 0, 5) &&
+            validateInput(run1A0Input, 0, 360, true) &&
+            run1N1Input.value.trim() !== '';
     }
 
     /* --- 버튼 활성/비활성 토글 --- */
     function updateButtonStates() {
-        const v1 = validateInput(run1U0Input, warnRun1U0, 0, 5, 'U0');
-        const v2 = validateInput(run1A0Input, warnRun1A0, 0, 360, 'A0', true);
+        const v1 = validateInput(run1U0Input, 0, 5);
+        const v2 = validateInput(run1A0Input, 0, 360, true);
         run1Btn.disabled = !(v1 && v2);
 
-        const v3 = validateInput(run2U1Input, warnRun2U1, 0, 5, 'U1');
-        const v4 = validateInput(run2A1Input, warnRun2A1, 0, 360, 'A1', true);
+        const v3 = validateInput(run2U1Input, 0, 5);
+        const v4 = validateInput(run2A1Input, 0, 360, true);
         run2Btn.disabled = !(isRun1FullyEntered() && v3 && v4);
     }
 
@@ -615,138 +880,114 @@ document.addEventListener('DOMContentLoaded', () => {
             updateButtonStates();
             inputEl.dataset.priorWarned = 'false';
         });
-
-        inputEl.addEventListener('blur', e => {
-            if (!isRun1FullyEntered()) return;
-            if (priorEl) {
-                const pv = parseFloat(priorEl.value);
-                if (isNaN(pv) || pv <= 0 || (priorEl === run1U0Input && pv >= 5)) {
-                    if (inputEl.dataset.priorWarned === 'false') {
-                        alert(priorMsg);
-                        inputEl.dataset.priorWarned = 'true';
-                    }
-                    inputEl.value = '';
-                    priorEl.focus();
-                    return;
-                }
-            }
-            if (!validateInput(inputEl, warningEl, min, max, label, isAngle)) {
-                inputEl.focus();
-            }
-        });
-
-        inputEl.addEventListener('keydown', e => {
-            if (!isRun1FullyEntered()) return;
-            if (e.key === 'Tab' && priorEl) {
-                const pv = parseFloat(priorEl.value);
-                if (isNaN(pv) || pv <= 0 || (priorEl === run1U0Input && pv >= 5)) {
-                    if (inputEl.dataset.priorWarned === 'false') {
-                        alert(priorMsg);
-                        inputEl.dataset.priorWarned = 'true';
-                    }
-                    e.preventDefault();
-                    priorEl.focus();
-                }
-            }
-        });
     }
 
     // U0 → A0, U1 → A1 순서 강제
-    setupInputValidation(
-        run1U0Input, warnRun1U0, 0, 5, 'U0'
-    );
-    setupInputValidation(
-        run1A0Input, warnRun1A0, 0, 360, 'A0', true,
-        run1U0Input, '먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.'
-    );
-    setupInputValidation(
-        run2U1Input, warnRun2U1, 0, 5, 'U1'
-    );
-    setupInputValidation(
-        run2A1Input, warnRun2A1, 0, 360, 'A1', true,
-        run2U1Input, '먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.'
-    );
+    setupInputValidation(run1U0Input, warnRun1U0, 0, 5, 'U0');
+    setupInputValidation(run2U1Input, warnRun2U1, 0, 5, 'U1');
 
     /* --- Run1 미완료 시 Run2 접근 차단 --- */
-    function guardRun1(e) {
+    async function guardRun1(e) {
         if (!isRun1FullyEntered()) {
-            alert('먼저 Run 1를 입력하세요.');
+            await showWarningPopup(
+                `<span style="color:blue">먼저 Run 1</strong> 값을 입력하세요.<br>
+                Run 1 입력란으로 이동합니다.</span>`
+            );
             bootstrap.Tab
                 .getOrCreateInstance(document.getElementById('run1-tab'))
                 .show();
             e.target.blur();
         }
     }
+
+    async function guardPriorInput(e, priorEl, priorMsg) {
+        const pv = parseFloat(priorEl.value);
+        if (isNaN(pv) || pv <= 0 || (priorEl === run1U0Input && pv >= 5)) {
+            await showWarningPopup(priorMsg);
+            priorEl.focus();
+            if (e.type === 'keydown') e.preventDefault();
+            else e.target.blur();
+        }
+    }
+
+    // U0 입력란에서 Tab 키를 누를 때 유효성 검사
+    run1U0Input.addEventListener('keydown', async e => {
+        if (e.key === 'Tab') {
+            if (!validateInput(run1U0Input, 0, 5)) {
+                e.preventDefault();
+                await showWarningPopup('먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
+                run1U0Input.focus();
+            }
+        }
+    });
+
+    // U0 → A0 순서 강제 로직
+    run1A0Input.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            guardPriorInput(e, run1U0Input, '먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
+        }
+    });
+    run1A0Input.addEventListener('mousedown', e => {
+        guardPriorInput(e, run1U0Input, '먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
+    });
+
     [run2N1PreInput, run2U1Input, run2A1Input].forEach(el =>
         el.addEventListener('focus', guardRun1)
     );
 
-    /* --- U1 키다운(Tab) 차단 + 메시지 --- */
-    run2U1Input.addEventListener('keydown', e => {
+    // U1 입력란에서 Tab 키를 누를 때 유효성 검사
+    run2U1Input.addEventListener('keydown', async e => {
         if (!isRun1FullyEntered()) return;
         if (e.key === 'Tab') {
-            const u1 = parseFloat(run2U1Input.value);
-            if (isNaN(u1) || u1 <= 0 || u1 >= 5) {
+            if (!validateInput(run2U1Input, 0, 5)) {
                 e.preventDefault();
-                alert('먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
+                await showWarningPopup('먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
                 run2U1Input.focus();
             }
         }
     });
 
-    /* --- A1 prior-guard (U1 먼저) --- */
-    function guardRun2U1(e) {
-        if (!isRun1FullyEntered()) return;
-        const u1 = parseFloat(run2U1Input.value);
-        if (isNaN(u1) || u1 <= 0 || u1 >= 5) {
-            alert('먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
-            bootstrap.Tab
-                .getOrCreateInstance(document.getElementById('run2-tab'))
-                .show();
-            run2U1Input.focus();
-            if (e.type === 'keydown') e.preventDefault();
-            else                       e.target.blur();
-        }
-    }
-
-    function guardRun1U0(e) {
-        const u0 = parseFloat(run1U0Input.value);
-        if (isNaN(u0) || u0 <= 0 || u0 >= 5) {
-            alert('먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
-            bootstrap.Tab
-                .getOrCreateInstance(document.getElementById('run1-tab'))
-                .show();
-            run1U0Input.focus();
-            if (e.type === 'keydown') e.preventDefault();
-            else                       e.target.blur();
-        }
-    }
-    run1A0Input.addEventListener('focus',    guardRun1U0);
-    run1A0Input.addEventListener('keydown',  e => { if (e.key==='Tab') guardRun1U0(e); });
-    run1A0Input.addEventListener('mousedown', e => { 
-        const u0 = parseFloat(run1U0Input.value);
-        if (isNaN(u0) || u0 <= 0 || u0 >= 5) {
-            guardRun1U0(e); 
-            e.preventDefault(); 
+    // U1 → A1 순서 강제 로직
+    run2A1Input.addEventListener('focus', e => {
+        guardPriorInput(e, run2U1Input, '먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
+    });
+    run2A1Input.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+            guardPriorInput(e, run2U1Input, '먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
         }
     });
-
-    run2A1Input.addEventListener('focus',   guardRun2U1);
-    run2A1Input.addEventListener('keydown', e => { if (e.key==='Tab') guardRun2U1(e); });
     run2A1Input.addEventListener('mousedown', e => {
         if (!isRun1FullyEntered()) {
             guardRun1(e);
-            e.preventDefault();
         } else {
-            const u1 = parseFloat(run2U1Input.value);
-            if (isNaN(u1) || u1 <= 0 || u1 >= 5) {
-                guardRun2U1(e);
-                e.preventDefault();
-            }
-        };
+            guardPriorInput(e, run2U1Input, '먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
+        }
     });
-
     updateButtonStates();
 
-});
+    // A0, A1 팝업 경고 로직 (재사용 가능한 함수로 통합)
+    async function handleAngleBlur(inputEl, priorEl, warnEl, label) {
+        const v = parseFloat(inputEl.value);
+        if (priorEl && !validateInput(priorEl, 0, 5)) {
+            inputEl.value = '';
+            await showWarningPopup(`먼저 ${priorEl.id.toUpperCase().split('_')[1]} 값을 0보다 크고 5 미만으로 입력해 주세요.`);
+            priorEl.focus();
+            return;
+        }
 
+        if (v === 360) {
+            showWarning(warnEl, `${label} 값은 0으로 입력해 주세요.`);
+            inputEl.value = '0';
+        } else if (!validateInput(inputEl, 0, 360, true)) {
+            await showWarningPopup(`${label} 값은 0 이상 360 미만이어야 합니다.`);
+            inputEl.focus();
+        } else {
+            hideWarning(warnEl);
+        }
+        updateButtonStates();
+    }
+    
+    // A0, A1 입력란에 'blur' 이벤트 리스너 추가
+    run1A0Input.addEventListener('blur', e => handleAngleBlur(run1A0Input, run1U0Input, warnRun1A0, 'A0'));
+    run2A1Input.addEventListener('blur', e => handleAngleBlur(run2A1Input, run2U1Input, warnRun2A1, 'A1'));
+});
