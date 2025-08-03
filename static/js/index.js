@@ -445,6 +445,16 @@ function displayResultsInModal(primaryResult, secondaryResult, params) {
     resultModal.show();
 }
 
+// --- alert custom ---
+function showWarningPopup(htmlMsg) {
+    return Swal.fire({
+        icon: 'warning',
+        title: '알림',
+        html: htmlMsg,
+        confirmButtonText: '확인'
+    });
+}
+
 // --- Run 1 계산 ---
 function calculateRun1() {
     const n1 = parseFloat(document.getElementById('run1_n1').value);
@@ -457,7 +467,13 @@ function calculateRun1() {
     const result = findApproximateWeightCombination(calculated_w1, n1, u0, (u0 >= 4 ? 2 : 1));
 
     if (!result.primary && !result.secondary) {
-        alert('적절한 무게 조합을 찾을 수 없습니다.\nu0 값을 다른 값으로 입력해 주세요.');
+        showWarningPopup(`
+            <div style="color:blue">
+                적절한 무게 조합을 찾을 수 없습니다.
+                <span class="badge text-bg-danger">U0</span> 
+                값을 다른 값으로 입력해 주세요.
+            </div>`
+        );
         return;
     }
 
@@ -534,7 +550,13 @@ function calculateRun2() {
 
     const result = findApproximateWeightCombination(calculated_w2, n1, u0, (u0 >= 4 ? 2 : 1));
     if (!result.primary && !result.secondary) {
-        alert('Run 2에 대한 적절한 무게 조합을 찾을 수 없습니다.\na1 값을 다른 값으로 입력해 주세요.');
+        showWarningPopup(`
+            <div style="color:blue">
+                적절한 무게 조합을 찾을 수 없습니다.
+                <span class="badge text-bg-danger">A1</span>
+                값을 다른 값으로 입력해 주세요.
+            </div>
+        `);
         return;
     }
 
@@ -567,17 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const warnRun1A0 = document.getElementById('warn_run1_a0');
     const warnRun2U1 = document.getElementById('warn_run2_u1');
     const warnRun2A1 = document.getElementById('warn_run2_a1');
-
-    /* --- alert custom ---*/
-    function showWarningPopup(htmlMsg) {
-        return Swal.fire({
-            icon: 'warning',
-            title: '알림',
-            html: htmlMsg,
-            confirmButtonText: '확인'
-        });
-    }
-
+    
     /* --- 유효성 검사 헬퍼 --- */
     function showWarning(el, msg) { el.innerText = msg; el.style.display = 'block'; }
     function hideWarning(el) { el.innerText = ''; el.style.display = 'none'; }
@@ -662,11 +674,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // U0 → A0 순서 강제 로직
-    // run1A0Input.addEventListener('keydown', e => {
-    //     if (e.key === 'Tab') {
-    //         guardPriorInput(e, run1U0Input, '먼저 U0 값을 0보다 크고 5 미만으로 입력해 주세요.');
-    //     }
-    // });
     run1A0Input.addEventListener('mousedown', async e => {
         if (!validateInput(run1U0Input, 0, 5)) {
             e.preventDefault();
@@ -700,11 +707,13 @@ document.addEventListener('DOMContentLoaded', () => {
     run2A1Input.addEventListener('focus', e => {
         guardPriorInput(e, run2U1Input, '먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
     });
+
     run2A1Input.addEventListener('keydown', e => {
         if (e.key === 'Tab') {
             guardPriorInput(e, run2U1Input, '먼저 U1 값을 0보다 크고 5 미만으로 입력해 주세요.');
         }
     });
+
     run2A1Input.addEventListener('mousedown', async e => {
         if (!isRun1FullyEntered()) {
             guardRun1(e);
@@ -715,6 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
             run2U1Input.focus();
         }
     });
+
     updateButtonStates();
 
     // A0, A1 팝업 경고 로직 (재사용 가능한 함수로 통합)
