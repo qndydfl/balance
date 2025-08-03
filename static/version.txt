@@ -1,0 +1,7 @@
+version imformation
+
+1.2.3
+
+1 : html layout 변화
+2 : js - function 추가
+3 : minor - html 안에 text, function 안에 내용 추가
