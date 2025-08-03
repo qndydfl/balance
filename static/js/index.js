@@ -469,7 +469,7 @@ function calculateRun1() {
     if (!result.primary && !result.secondary) {
         showWarningPopup(`
             <div style="color:blue">
-                적절한 무게 조합을 찾을 수 없습니다.
+                적절한 무게 조합을 찾을 수 없습니다.</br>
                 <span class="badge text-bg-danger">U0</span> 
                 값을 다른 값으로 입력해 주세요.
             </div>`
@@ -552,7 +552,7 @@ function calculateRun2() {
     if (!result.primary && !result.secondary) {
         showWarningPopup(`
             <div style="color:blue">
-                적절한 무게 조합을 찾을 수 없습니다.
+                적절한 무게 조합을 찾을 수 없습니다.</br>
                 <span class="badge text-bg-danger">A1</span>
                 값을 다른 값으로 입력해 주세요.
             </div>
